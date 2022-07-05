@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Consul namespace 사용시 Nomad의 서비스 등록 | docmoa</title>
+    <meta name="generator" content="VuePress 1.8.2">
+    <link rel="icon" href="/favicon.ico">
+    <link rel="manifest" href="/manifest.json">
+    <meta name="description" content="With Consul Namespace">
+    <meta name="twitter:title" content="Consul namespace 사용시 Nomad의 서비스 등록">
+    <meta name="twitter:description" content="`">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:url" content="https://docmoa.github.io/04-HashiCorp/07-Nomad/02-Config/consul-namespace.html">
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="Consul namespace 사용시 Nomad의 서비스 등록">
+    <meta property="og:description" content="`">
+    <meta property="og:url" content="https://docmoa.github.io/04-HashiCorp/07-Nomad/02-Config/consul-namespace.html">
+    <meta property="og:site_name" content="docmoa">
+    <meta property="article:tag" content="Nomad">
+    <meta itemprop="name" content="Consul namespace 사용시 Nomad의 서비스 등록">
+    <meta itemprop="description" content="`">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="msapplication-TileImage" content="/image/docmoa-144.png">
+    
+    <link rel="preload" href="/assets/css/0.styles.af8b0614.css" as="style"><link rel="preload" href="/assets/js/app.b6bccdf7.js" as="script"><link rel="preload" href="/assets/js/3.e2e6689d.js" as="script"><link rel="preload" href="/assets/js/150.d79e3e7b.js" as="script"><link rel="preload" href="/assets/js/25.1d118ed6.js" as="script"><link rel="prefetch" href="/assets/js/10.41eab043.js"><link rel="prefetch" href="/assets/js/100.31b5ce25.js"><link rel="prefetch" href="/assets/js/101.798b9f8f.js"><link rel="prefetch" href="/assets/js/102.9211c39d.js"><link rel="prefetch" href="/assets/js/103.cc6f5ead.js"><link rel="prefetch" href="/assets/js/104.da62b735.js"><link rel="prefetch" href="/assets/js/105.790f3a83.js"><link rel="prefetch" href="/assets/js/106.0e0d0a2b.js"><link rel="prefetch" href="/assets/js/107.7ead3764.js"><link rel="prefetch" href="/assets/js/108.7882c9f0.js"><link rel="prefetch" href="/assets/js/109.34514d43.js"><link rel="prefetch" href="/assets/js/11.e2b6598a.js"><link rel="prefetch" href="/assets/js/110.ead7a65c.js"><link rel="prefetch" href="/assets/js/111.c50b2996.js"><link rel="prefetch" href="/assets/js/112.65a2eb01.js"><link rel="prefetch" href="/assets/js/113.c7860b5f.js"><link rel="prefetch" href="/assets/js/114.d25f85e2.js"><link rel="prefetch" href="/assets/js/115.363b8cca.js"><link rel="prefetch" href="/assets/js/116.ea4d267a.js"><link rel="prefetch" href="/assets/js/117.f61c271d.js"><link rel="prefetch" href="/assets/js/118.429d7367.js"><link rel="prefetch" href="/assets/js/119.1ba985ba.js"><link rel="prefetch" href="/assets/js/12.a80efdb0.js"><link rel="prefetch" href="/assets/js/120.72bdb80d.js"><link rel="prefetch" href="/assets/js/121.968a83ab.js"><link rel="prefetch" href="/assets/js/122.1ba4c5d7.js"><link rel="prefetch" href="/assets/js/123.0bb37848.js"><link rel="prefetch" href="/assets/js/124.1a795cfb.js"><link rel="prefetch" href="/assets/js/125.58270fa8.js"><link rel="prefetch" href="/assets/js/126.a2c73a6e.js"><link rel="prefetch" href="/assets/js/127.85068fbf.js"><link rel="prefetch" href="/assets/js/128.6fe1781a.js"><link rel="prefetch" href="/assets/js/129.12ac7230.js"><link rel="prefetch" href="/assets/js/13.e571a1b3.js"><link rel="prefetch" href="/assets/js/130.03693392.js"><link rel="prefetch" href="/assets/js/131.3e5550f9.js"><link rel="prefetch" href="/assets/js/132.67bb2d37.js"><link rel="prefetch" href="/assets/js/133.867564cc.js"><link rel="prefetch" href="/assets/js/134.46c75143.js"><link rel="prefetch" href="/assets/js/135.8b852def.js"><link rel="prefetch" href="/assets/js/136.56b89087.js"><link rel="prefetch" href="/assets/js/137.b05668ba.js"><link rel="prefetch" href="/assets/js/138.ebbb01fa.js"><link rel="prefetch" href="/assets/js/139.ec684c2c.js"><link rel="prefetch" href="/assets/js/14.69a5e456.js"><link rel="prefetch" href="/assets/js/140.14339d98.js"><link rel="prefetch" href="/assets/js/141.8bdc8521.js"><link rel="prefetch" href="/assets/js/142.a0a23f8d.js"><link rel="prefetch" href="/assets/js/143.f32ee764.js"><link rel="prefetch" href="/assets/js/144.2f573916.js"><link rel="prefetch" href="/assets/js/145.3a6b79fd.js"><link rel="prefetch" href="/assets/js/146.8ce3dcd6.js"><link rel="prefetch" href="/assets/js/147.5fe33517.js"><link rel="prefetch" href="/assets/js/148.8a03f1ec.js"><link rel="prefetch" href="/assets/js/149.a8687d3e.js"><link rel="prefetch" href="/assets/js/15.73496781.js"><link rel="prefetch" href="/assets/js/151.6e0f370d.js"><link rel="prefetch" href="/assets/js/152.76546147.js"><link rel="prefetch" href="/assets/js/153.d09340ca.js"><link rel="prefetch" href="/assets/js/154.51825e73.js"><link rel="prefetch" href="/assets/js/155.90e68970.js"><link rel="prefetch" href="/assets/js/156.129fdc68.js"><link rel="prefetch" href="/assets/js/157.b8f4b282.js"><link rel="prefetch" href="/assets/js/158.9152d24c.js"><link rel="prefetch" href="/assets/js/159.2b660299.js"><link rel="prefetch" href="/assets/js/16.d81d3835.js"><link rel="prefetch" href="/assets/js/160.adffbe88.js"><link rel="prefetch" href="/assets/js/161.8741b5e9.js"><link rel="prefetch" href="/assets/js/162.600433c1.js"><link rel="prefetch" href="/assets/js/163.4e10d3d3.js"><link rel="prefetch" href="/assets/js/164.4d77aba6.js"><link rel="prefetch" href="/assets/js/165.0ebb8880.js"><link rel="prefetch" href="/assets/js/166.57c8d20e.js"><link rel="prefetch" href="/assets/js/167.e6b6b24c.js"><link rel="prefetch" href="/assets/js/168.d1049f76.js"><link rel="prefetch" href="/assets/js/169.8dc37a47.js"><link rel="prefetch" href="/assets/js/17.c319bb1c.js"><link rel="prefetch" href="/assets/js/170.628ea13d.js"><link rel="prefetch" href="/assets/js/171.b63f5d75.js"><link rel="prefetch" href="/assets/js/172.fb253177.js"><link rel="prefetch" href="/assets/js/173.5c616fca.js"><link rel="prefetch" href="/assets/js/174.0788f38a.js"><link rel="prefetch" href="/assets/js/175.fa590b99.js"><link rel="prefetch" href="/assets/js/176.53126a68.js"><link rel="prefetch" href="/assets/js/177.9c200c94.js"><link rel="prefetch" href="/assets/js/178.6e36bf73.js"><link rel="prefetch" href="/assets/js/179.39060e46.js"><link rel="prefetch" href="/assets/js/18.63b9f6ac.js"><link rel="prefetch" href="/assets/js/180.c6cba237.js"><link rel="prefetch" href="/assets/js/181.f58eec21.js"><link rel="prefetch" href="/assets/js/182.1e5b39e3.js"><link rel="prefetch" href="/assets/js/183.bba375d6.js"><link rel="prefetch" href="/assets/js/184.a6d0e66a.js"><link rel="prefetch" href="/assets/js/185.ce6e0e0d.js"><link rel="prefetch" href="/assets/js/186.8d23b1ea.js"><link rel="prefetch" href="/assets/js/187.b5fd50ed.js"><link rel="prefetch" href="/assets/js/188.23ebbbd6.js"><link rel="prefetch" href="/assets/js/189.164ce979.js"><link rel="prefetch" href="/assets/js/19.8860ea76.js"><link rel="prefetch" href="/assets/js/190.6c1eeb7a.js"><link rel="prefetch" href="/assets/js/191.4c65abf1.js"><link rel="prefetch" href="/assets/js/192.31da951f.js"><link rel="prefetch" href="/assets/js/193.1478d525.js"><link rel="prefetch" href="/assets/js/194.0387cb9d.js"><link rel="prefetch" href="/assets/js/195.31214b16.js"><link rel="prefetch" href="/assets/js/196.95c54036.js"><link rel="prefetch" href="/assets/js/197.e15e8bef.js"><link rel="prefetch" href="/assets/js/198.9bd67daf.js"><link rel="prefetch" href="/assets/js/199.a48ac0d6.js"><link rel="prefetch" href="/assets/js/20.d7f319fd.js"><link rel="prefetch" href="/assets/js/200.95af2b61.js"><link rel="prefetch" href="/assets/js/201.82b79c2b.js"><link rel="prefetch" href="/assets/js/202.f97d740a.js"><link rel="prefetch" href="/assets/js/203.2e114994.js"><link rel="prefetch" href="/assets/js/204.c209d2c3.js"><link rel="prefetch" href="/assets/js/205.d279482f.js"><link rel="prefetch" href="/assets/js/21.a114b238.js"><link rel="prefetch" href="/assets/js/22.debabcf2.js"><link rel="prefetch" href="/assets/js/23.f9f703c4.js"><link rel="prefetch" href="/assets/js/24.f53d0a1d.js"><link rel="prefetch" href="/assets/js/26.9405b8bf.js"><link rel="prefetch" href="/assets/js/27.f17f7bef.js"><link rel="prefetch" href="/assets/js/28.a21ed34b.js"><link rel="prefetch" href="/assets/js/29.036d2291.js"><link rel="prefetch" href="/assets/js/30.54d690d2.js"><link rel="prefetch" href="/assets/js/31.04d07d3b.js"><link rel="prefetch" href="/assets/js/32.ed0a69b8.js"><link rel="prefetch" href="/assets/js/33.743db242.js"><link rel="prefetch" href="/assets/js/34.649644f0.js"><link rel="prefetch" href="/assets/js/35.4888260d.js"><link rel="prefetch" href="/assets/js/36.8057d558.js"><link rel="prefetch" href="/assets/js/37.d000a486.js"><link rel="prefetch" href="/assets/js/38.8722df4c.js"><link rel="prefetch" href="/assets/js/39.a09a2b2b.js"><link rel="prefetch" href="/assets/js/4.32c8b2cb.js"><link rel="prefetch" href="/assets/js/40.c02e006e.js"><link rel="prefetch" href="/assets/js/41.7ce78d1e.js"><link rel="prefetch" href="/assets/js/42.b17ba486.js"><link rel="prefetch" href="/assets/js/43.92e7a7be.js"><link rel="prefetch" href="/assets/js/44.30dc3eaf.js"><link rel="prefetch" href="/assets/js/45.ccf2fb63.js"><link rel="prefetch" href="/assets/js/46.a97fa4b2.js"><link rel="prefetch" href="/assets/js/47.1f422ddb.js"><link rel="prefetch" href="/assets/js/48.88c309a6.js"><link rel="prefetch" href="/assets/js/49.1e6aaa23.js"><link rel="prefetch" href="/assets/js/5.f05aa516.js"><link rel="prefetch" href="/assets/js/50.a489c804.js"><link rel="prefetch" href="/assets/js/51.74d694bd.js"><link rel="prefetch" href="/assets/js/52.44d0aa9b.js"><link rel="prefetch" href="/assets/js/53.df36d09a.js"><link rel="prefetch" href="/assets/js/54.5cb53d17.js"><link rel="prefetch" href="/assets/js/55.c2bd31a8.js"><link rel="prefetch" href="/assets/js/56.1249b372.js"><link rel="prefetch" href="/assets/js/57.f2ec0f90.js"><link rel="prefetch" href="/assets/js/58.074c05c7.js"><link rel="prefetch" href="/assets/js/59.19c72abe.js"><link rel="prefetch" href="/assets/js/6.20270f8a.js"><link rel="prefetch" href="/assets/js/60.e156625a.js"><link rel="prefetch" href="/assets/js/61.280adeb3.js"><link rel="prefetch" href="/assets/js/62.624bc2dc.js"><link rel="prefetch" href="/assets/js/63.284877e3.js"><link rel="prefetch" href="/assets/js/64.adcd5856.js"><link rel="prefetch" href="/assets/js/65.87dc63aa.js"><link rel="prefetch" href="/assets/js/66.8c218a0b.js"><link rel="prefetch" href="/assets/js/67.eb5f86e3.js"><link rel="prefetch" href="/assets/js/68.501e088d.js"><link rel="prefetch" href="/assets/js/69.4f0176f4.js"><link rel="prefetch" href="/assets/js/7.a89dfe0c.js"><link rel="prefetch" href="/assets/js/70.2c4626de.js"><link rel="prefetch" href="/assets/js/71.072bd415.js"><link rel="prefetch" href="/assets/js/72.874aa616.js"><link rel="prefetch" href="/assets/js/73.f583310b.js"><link rel="prefetch" href="/assets/js/74.dd22ff96.js"><link rel="prefetch" href="/assets/js/75.fd4f7ae6.js"><link rel="prefetch" href="/assets/js/76.147b9621.js"><link rel="prefetch" href="/assets/js/77.a1c7bdcc.js"><link rel="prefetch" href="/assets/js/78.02dbd939.js"><link rel="prefetch" href="/assets/js/79.8c68e2d0.js"><link rel="prefetch" href="/assets/js/8.f9344460.js"><link rel="prefetch" href="/assets/js/80.86d29d86.js"><link rel="prefetch" href="/assets/js/81.b7d267b5.js"><link rel="prefetch" href="/assets/js/82.a2d9c7ec.js"><link rel="prefetch" href="/assets/js/83.65df14d2.js"><link rel="prefetch" href="/assets/js/84.124a9407.js"><link rel="prefetch" href="/assets/js/85.168f0a2b.js"><link rel="prefetch" href="/assets/js/86.39972cda.js"><link rel="prefetch" href="/assets/js/87.041e2f7f.js"><link rel="prefetch" href="/assets/js/88.ea4ed64b.js"><link rel="prefetch" href="/assets/js/89.d9114252.js"><link rel="prefetch" href="/assets/js/9.abb82ff1.js"><link rel="prefetch" href="/assets/js/90.8e41a134.js"><link rel="prefetch" href="/assets/js/91.6a0c20f5.js"><link rel="prefetch" href="/assets/js/92.4e763190.js"><link rel="prefetch" href="/assets/js/93.af0f570b.js"><link rel="prefetch" href="/assets/js/94.bba22364.js"><link rel="prefetch" href="/assets/js/95.f1b99360.js"><link rel="prefetch" href="/assets/js/96.c58a6c52.js"><link rel="prefetch" href="/assets/js/97.e3c244ce.js"><link rel="prefetch" href="/assets/js/98.8c746e94.js"><link rel="prefetch" href="/assets/js/99.bc09aeb4.js"><link rel="prefetch" href="/assets/js/vendors~reveal.cd42adf8.js">
+    <link rel="stylesheet" href="/assets/css/0.styles.af8b0614.css">
+  </head>
+  <body>
+    <div id="app" data-server-rendered="true"><div class="theme-container"><header class="navbar"><div class="sidebar-button"><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img" viewBox="0 0 448 512" class="icon"><path fill="currentColor" d="M436 124H12c-6.627 0-12-5.373-12-12V80c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12z"></path></svg></div> <a href="/" class="home-link router-link-active"><img src="/image/docmoa-144.png" alt="docmoa" class="logo"> <span class="site-name can-hide">docmoa</span></a> <div class="links"><div class="search-box"><input aria-label="Search" autocomplete="off" spellcheck="false" value=""> <!----></div> <nav class="nav-links can-hide"><div class="nav-item"><a href="/00-Howto/" class="nav-link">
+  How To
+</a></div><div class="nav-item"><div class="dropdown-wrapper"><button type="button" aria-label="Infra" class="dropdown-title"><span class="title">Infra</span> <span class="arrow down"></span></button> <button type="button" aria-label="Infra" class="mobile-dropdown-title"><span class="title">Infra</span> <span class="arrow right"></span></button> <ul class="nav-dropdown" style="display:none;"><li class="dropdown-item"><!----> <a href="/01-Infrastructure/" class="nav-link">
+  Infrastructure
+</a></li><li class="dropdown-item"><!----> <a href="/02-Private Platform/" class="nav-link">
+  Private-Platform
+</a></li><li class="dropdown-item"><!----> <a href="/03-Public Cloud/" class="nav-link">
+  Public-Cloud
+</a></li></ul></div></div><div class="nav-item"><a href="/05-Software/" class="nav-link">
+  Software
+</a></div><div class="nav-item"><a href="/04-HashiCorp/" class="nav-link router-link-active">
+  HashiCorp
+</a></div><div class="nav-item"><a href="/06-etc/" class="nav-link">
+  Etc.
+</a></div><div class="nav-item"><div class="dropdown-wrapper"><button type="button" aria-label="MORE" class="dropdown-title"><span class="title">MORE</span> <span class="arrow down"></span></button> <button type="button" aria-label="MORE" class="mobile-dropdown-title"><span class="title">MORE</span> <span class="arrow right"></span></button> <ul class="nav-dropdown" style="display:none;"><li class="dropdown-item"><!----> <a href="/99-about/01-About.html" class="nav-link">
+  About
+</a></li><li class="dropdown-item"><!----> <a href="/99-about/02-Thanks.html" class="nav-link">
+  Thank you
+</a></li><li class="dropdown-item"><!----> <a href="https://github.com/docmoa/docs" target="_blank" rel="noopener noreferrer" class="nav-link external">
+  Go Contribute
+  <span><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg> <span class="sr-only">(opens new window)</span></span></a></li></ul></div></div><div class="nav-item"><a href="/98-Tags.html" class="nav-link">
+  #Tags
+</a></div> <!----></nav></div></header> <div class="sidebar-mask"></div> <aside class="sidebar"><nav class="nav-links"><div class="nav-item"><a href="/00-Howto/" class="nav-link">
+  How To
+</a></div><div class="nav-item"><div class="dropdown-wrapper"><button type="button" aria-label="Infra" class="dropdown-title"><span class="title">Infra</span> <span class="arrow down"></span></button> <button type="button" aria-label="Infra" class="mobile-dropdown-title"><span class="title">Infra</span> <span class="arrow right"></span></button> <ul class="nav-dropdown" style="display:none;"><li class="dropdown-item"><!----> <a href="/01-Infrastructure/" class="nav-link">
+  Infrastructure
+</a></li><li class="dropdown-item"><!----> <a href="/02-Private Platform/" class="nav-link">
+  Private-Platform
+</a></li><li class="dropdown-item"><!----> <a href="/03-Public Cloud/" class="nav-link">
+  Public-Cloud
+</a></li></ul></div></div><div class="nav-item"><a href="/05-Software/" class="nav-link">
+  Software
+</a></div><div class="nav-item"><a href="/04-HashiCorp/" class="nav-link router-link-active">
+  HashiCorp
+</a></div><div class="nav-item"><a href="/06-etc/" class="nav-link">
+  Etc.
+</a></div><div class="nav-item"><div class="dropdown-wrapper"><button type="button" aria-label="MORE" class="dropdown-title"><span class="title">MORE</span> <span class="arrow down"></span></button> <button type="button" aria-label="MORE" class="mobile-dropdown-title"><span class="title">MORE</span> <span class="arrow right"></span></button> <ul class="nav-dropdown" style="display:none;"><li class="dropdown-item"><!----> <a href="/99-about/01-About.html" class="nav-link">
+  About
+</a></li><li class="dropdown-item"><!----> <a href="/99-about/02-Thanks.html" class="nav-link">
+  Thank you
+</a></li><li class="dropdown-item"><!----> <a href="https://github.com/docmoa/docs" target="_blank" rel="noopener noreferrer" class="nav-link external">
+  Go Contribute
+  <span><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg> <span class="sr-only">(opens new window)</span></span></a></li></ul></div></div><div class="nav-item"><a href="/98-Tags.html" class="nav-link">
+  #Tags
+</a></div> <!----></nav>  <ul class="sidebar-links"><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>Howto</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>Infrastructure</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>Private Platform</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>Public Cloud</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading open"><span>Hashicorp</span> <span class="arrow down"></span></p> <ul class="sidebar-links sidebar-group-items"><li><a href="/04-HashiCorp/" aria-current="page" class="sidebar-link">Overview</a></li><li><section class="sidebar-group collapsable is-sub-group depth-1"><p class="sidebar-heading"><span>Updates</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable is-sub-group depth-1"><p class="sidebar-heading open"><span>Nomad</span> <span class="arrow down"></span></p> <ul class="sidebar-links sidebar-group-items"><li><section class="sidebar-group collapsable is-sub-group depth-2"><p class="sidebar-heading"><span>Information</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable is-sub-group depth-2"><p class="sidebar-heading open"><span>Config</span> <span class="arrow down"></span></p> <ul class="sidebar-links sidebar-group-items"><li><a href="/04-HashiCorp/07-Nomad/02-Config/Cloudwatch-Logging.html" class="sidebar-link">Docker log driver and Cloudwatch on Nomad</a></li><li><a href="/04-HashiCorp/07-Nomad/02-Config/Namespace.html" class="sidebar-link">Nomad Namespace</a></li><li><a href="/04-HashiCorp/07-Nomad/02-Config/Nomad-Ui-Token.html" class="sidebar-link">Nomad UI Token</a></li><li><a href="/04-HashiCorp/07-Nomad/02-Config/Nomad-sslkey-create.html" class="sidebar-link">Nomad 인증서 생성</a></li><li><a href="/04-HashiCorp/07-Nomad/02-Config/Server.html" class="sidebar-link">Nomad 서버 설정</a></li><li><a href="/04-HashiCorp/07-Nomad/02-Config/client.html" class="sidebar-link">Nomad 클라이언트 설정</a></li><li><a href="/04-HashiCorp/07-Nomad/02-Config/common.html" class="sidebar-link">Nomad 공통 설정</a></li><li><a href="/04-HashiCorp/07-Nomad/02-Config/consul-namespace.html" aria-current="page" class="active sidebar-link">Consul namespace 사용시 Nomad의 서비스 등록</a></li><li><a href="/04-HashiCorp/07-Nomad/02-Config/csi-nfs.html" class="sidebar-link">nomad csi (nfs)</a></li><li><a href="/04-HashiCorp/07-Nomad/02-Config/integrateVault.html" class="sidebar-link">integrate Vault</a></li><li><a href="/04-HashiCorp/07-Nomad/02-Config/nomad-guide-basic.html" class="sidebar-link">Nomad Guide - Basic</a></li></ul></section></li><li><section class="sidebar-group collapsable is-sub-group depth-2"><p class="sidebar-heading"><span>Usecase</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable is-sub-group depth-2"><p class="sidebar-heading"><span>Samplejob</span> <span class="arrow right"></span></p> <!----></section></li></ul></section></li><li><section class="sidebar-group collapsable is-sub-group depth-1"><p class="sidebar-heading"><span>Vault</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable is-sub-group depth-1"><p class="sidebar-heading"><span>Boundary</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable is-sub-group depth-1"><p class="sidebar-heading"><span>Consul</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable is-sub-group depth-1"><p class="sidebar-heading"><span>Terraform</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable is-sub-group depth-1"><p class="sidebar-heading"><span>Vagrant</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable is-sub-group depth-1"><p class="sidebar-heading"><span>Packer</span> <span class="arrow right"></span></p> <!----></section></li></ul></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>Software</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>Etc</span> <span class="arrow right"></span></p> <!----></section></li><li><a href="/98-Tags.html" class="sidebar-link">Tags</a></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>About</span> <span class="arrow right"></span></p> <!----></section></li></ul> </aside> <main class="page"> <div class="theme-default-content content__default"><h1 id="consul-namespace-사용시-nomad의-서비스-등록"><a href="#consul-namespace-사용시-nomad의-서비스-등록" class="header-anchor">#</a> Consul namespace 사용시 Nomad의 서비스 등록</h1> <h2 id="job의-consul-namespace-정의"><a href="#job의-consul-namespace-정의" class="header-anchor">#</a> Job의 Consul Namespace 정의</h2> <p>Consul Enterprise는 <code>Namespace</code>가 있어서 Nomad로 Consul에 서비스 등록 시 특정 Namespace를 지정할 수 있음</p> <p>Job &gt; Group &gt; Consul</p> <div class="language-hcl line-numbers-mode"><div class="highlight-lines"><br><br><br><br><br><div class="highlighted"> </div><div class="highlighted"> </div><div class="highlighted"> </div><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br></div><pre class="language-hcl"><code>job <span class="token string">&quot;frontback_job&quot;</span> <span class="token punctuation">{</span>
+  group <span class="token string">&quot;backend_group_v1&quot;</span> <span class="token punctuation">{</span>
+
+    <span class="token property">count</span> <span class="token punctuation">=</span> <span class="token number">1</span>
+
+    <span class="token keyword">consul</span> <span class="token punctuation">{</span>
+      <span class="token property">namespace</span> <span class="token punctuation">=</span> <span class="token string">&quot;mynamespace&quot;</span>
+    <span class="token punctuation">}</span>
+
+    <span class="token keyword">service</span> <span class="token punctuation">{</span>
+      <span class="token property">name</span> <span class="token punctuation">=</span> <span class="token string">&quot;backend&quot;</span>
+      <span class="token property">port</span> <span class="token punctuation">=</span> <span class="token string">&quot;http&quot;</span>
+
+      <span class="token keyword">connect</span> <span class="token punctuation">{</span>
+        <span class="token keyword">sidecar_service</span> <span class="token punctuation">{</span><span class="token punctuation">}</span>
+      <span class="token punctuation">}</span>
+
+      <span class="token keyword">check</span> <span class="token punctuation">{</span>
+        <span class="token property">type</span>     <span class="token punctuation">=</span> <span class="token string">&quot;http&quot;</span>
+        <span class="token property">path</span>     <span class="token punctuation">=</span> <span class="token string">&quot;/&quot;</span>
+        <span class="token property">interval</span> <span class="token punctuation">=</span> <span class="token string">&quot;5s&quot;</span>
+        <span class="token property">timeout</span>  <span class="token punctuation">=</span> <span class="token string">&quot;3s&quot;</span>
+      <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span>
+<span class="token comment"># 생략</span>
+</code></pre><div class="line-numbers-wrapper"><span class="line-number">1</span><br><span class="line-number">2</span><br><span class="line-number">3</span><br><span class="line-number">4</span><br><span class="line-number">5</span><br><span class="line-number">6</span><br><span class="line-number">7</span><br><span class="line-number">8</span><br><span class="line-number">9</span><br><span class="line-number">10</span><br><span class="line-number">11</span><br><span class="line-number">12</span><br><span class="line-number">13</span><br><span class="line-number">14</span><br><span class="line-number">15</span><br><span class="line-number">16</span><br><span class="line-number">17</span><br><span class="line-number">18</span><br><span class="line-number">19</span><br><span class="line-number">20</span><br><span class="line-number">21</span><br><span class="line-number">22</span><br><span class="line-number">23</span><br><span class="line-number">24</span><br><span class="line-number">25</span><br></div></div><h2 id="service-mesh-upstream"><a href="#service-mesh-upstream" class="header-anchor">#</a> Service Mesh Upstream</h2> <p>해당 <code>group</code>에 대한 글로벌 설정이기 때문에 Consul과 관련해서 구성되는 모든 설정은 해당 <code>Namespace</code>를 기준으로 적용됨
+예를 들어 <code>upstream</code> 구성을 하면</p> <div class="language-hcl line-numbers-mode"><div class="highlight-lines"><br><br><br><br><div class="highlighted"> </div><div class="highlighted"> </div><div class="highlighted"> </div><br><br><br><br><br><br><br><br><div class="highlighted"> </div><div class="highlighted"> </div><div class="highlighted"> </div><div class="highlighted"> </div><br><br><br><br><br></div><pre class="language-hcl"><code>job <span class="token string">&quot;frontback_job&quot;</span> <span class="token punctuation">{</span>
+  group <span class="token string">&quot;frontend_group&quot;</span> <span class="token punctuation">{</span>
+    <span class="token property">count</span> <span class="token punctuation">=</span> <span class="token number">1</span>
+
+    <span class="token keyword">consul</span> <span class="token punctuation">{</span>
+      <span class="token property">namespace</span> <span class="token punctuation">=</span> <span class="token string">&quot;mesh&quot;</span>
+    <span class="token punctuation">}</span>
+
+    <span class="token keyword">service</span> <span class="token punctuation">{</span>
+      <span class="token property">name</span> <span class="token punctuation">=</span> <span class="token string">&quot;frontend&quot;</span>
+      <span class="token property">port</span> <span class="token punctuation">=</span> <span class="token string">&quot;http&quot;</span>
+
+      <span class="token keyword">connect</span> <span class="token punctuation">{</span>
+        <span class="token keyword">sidecar_service</span> <span class="token punctuation">{</span>
+          <span class="token keyword">proxy</span> <span class="token punctuation">{</span>
+            <span class="token keyword">upstreams</span> <span class="token punctuation">{</span>
+              <span class="token property">destination_name</span> <span class="token punctuation">=</span> <span class="token string">&quot;backend&quot;</span>
+              <span class="token property">local_bind_port</span>  <span class="token punctuation">=</span> <span class="token number">10000</span>
+            <span class="token punctuation">}</span>
+          <span class="token punctuation">}</span>
+        <span class="token punctuation">}</span>
+      <span class="token punctuation">}</span>
+<span class="token comment"># 생략</span>
+</code></pre><div class="line-numbers-wrapper"><span class="line-number">1</span><br><span class="line-number">2</span><br><span class="line-number">3</span><br><span class="line-number">4</span><br><span class="line-number">5</span><br><span class="line-number">6</span><br><span class="line-number">7</span><br><span class="line-number">8</span><br><span class="line-number">9</span><br><span class="line-number">10</span><br><span class="line-number">11</span><br><span class="line-number">12</span><br><span class="line-number">13</span><br><span class="line-number">14</span><br><span class="line-number">15</span><br><span class="line-number">16</span><br><span class="line-number">17</span><br><span class="line-number">18</span><br><span class="line-number">19</span><br><span class="line-number">20</span><br><span class="line-number">21</span><br><span class="line-number">22</span><br><span class="line-number">23</span><br></div></div><p>sidecar의 로그에서도 적용된 namespace로 리스너가 등록되는 로그(<code>namesapce/servicename</code>) 확인 가능</p> <div class="language- line-numbers-mode"><div class="highlight-lines"><br><br><br><br><br><div class="highlighted"> </div><br><br><br><br></div><pre class="language-text"><code>[2021-09-01 01:31:10.490][1][info][upstream] [source/common/upstream/cds_api_helper.cc:28] cds: add 3 cluster(s), remove 0 cluster(s)
+[2021-09-01 01:31:10.572][1][info][upstream] [source/common/upstream/cds_api_helper.cc:65] cds: added/updated 3 cluster(s), skipped 0 unmodified cluster(s)
+[2021-09-01 01:31:10.572][1][info][upstream] [source/common/upstream/cluster_manager_impl.cc:168] cm init: initializing secondary clusters
+[2021-09-01 01:31:10.574][1][info][upstream] [source/common/upstream/cluster_manager_impl.cc:192] cm init: all clusters initialized
+[2021-09-01 01:31:10.574][1][info][main] [source/server/server.cc:745] all clusters initialized. initializing init manager
+[2021-09-01 01:31:10.578][1][info][upstream] [source/server/lds_api.cc:78] lds: add/update listener 'mesh/backend:127.0.0.1:10000'
+[2021-09-01 01:31:10.586][1][info][upstream] [source/server/lds_api.cc:78] lds: add/update listener 'public_listener:0.0.0.0:24945'
+[2021-09-01 01:31:10.587][1][info][config] [source/server/listener_manager_impl.cc:888] all dependencies initialized. starting workers
+[2021-09-01 01:46:10.592][1][info][main] [source/server/drain_manager_impl.cc:70] shutting down parent after drain
+</code></pre><div class="line-numbers-wrapper"><span class="line-number">1</span><br><span class="line-number">2</span><br><span class="line-number">3</span><br><span class="line-number">4</span><br><span class="line-number">5</span><br><span class="line-number">6</span><br><span class="line-number">7</span><br><span class="line-number">8</span><br><span class="line-number">9</span><br></div></div><h2 id="dns-쿼리"><a href="#dns-쿼리" class="header-anchor">#</a> DNS 쿼리</h2> <div class="custom-block warning"><p class="custom-block-title">WARNING</p> <p>주의할점은 DNS를 사용하는 경우, 예를들어 template 작성시 namespace가 추가되면 경로상 datacenter도 정의해줘야 인식하는 것으로 보임</p> <div class="language- line-numbers-mode"><pre class="language-text"><code>[tag.]&lt;service&gt;.service.&lt;namespace&gt;.&lt;datacenter&gt;.&lt;domain&gt;
+</code></pre> <div class="line-numbers-wrapper"><span class="line-number">1</span><br></div></div><p>참고 링크 : <a href="https://www.consul.io/docs/discovery/dns#namespaced-services" target="_blank" rel="noopener noreferrer">https://www.consul.io/docs/discovery/dns#namespaced-services<span><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg> <span class="sr-only">(opens new window)</span></span></a></p></div> <p><strong>기존 템플릿</strong></p> <div class="language-hcl line-numbers-mode"><div class="highlight-lines"><br><br><br><br><br><br><br><br><br><br><br><div class="highlighted"> </div><br><br><br><br><br><br><br><br><br><br></div><pre class="language-hcl"><code><span class="token keyword">template</span> <span class="token punctuation">{</span>
+  <span class="token property">data</span> <span class="token punctuation">=</span> <span class="token heredoc string">&lt;&lt;EOF
+defaults
+   mode http
+
+frontend http_front
+   bind *:28888
+   default_backend http_back
+
+backend http_back
+    balance roundrobin
+    server-template mywebapp 2 _frontend._tcp.service.consul resolvers consul resolve-opts allow-dup-ip resolve-prefer ipv4 check
+
+resolvers consul
+  nameserver consul 127.0.0.1:8600
+  accepted_payload_size 8192
+  hold valid 5s
+EOF</span>
+
+  <span class="token property">destination</span> <span class="token punctuation">=</span> <span class="token string">&quot;local/haproxy.cfg&quot;</span>
+<span class="token punctuation">}</span>
+</code></pre><div class="line-numbers-wrapper"><span class="line-number">1</span><br><span class="line-number">2</span><br><span class="line-number">3</span><br><span class="line-number">4</span><br><span class="line-number">5</span><br><span class="line-number">6</span><br><span class="line-number">7</span><br><span class="line-number">8</span><br><span class="line-number">9</span><br><span class="line-number">10</span><br><span class="line-number">11</span><br><span class="line-number">12</span><br><span class="line-number">13</span><br><span class="line-number">14</span><br><span class="line-number">15</span><br><span class="line-number">16</span><br><span class="line-number">17</span><br><span class="line-number">18</span><br><span class="line-number">19</span><br><span class="line-number">20</span><br><span class="line-number">21</span><br></div></div><p><strong>Namespace 적용 템플릿</strong></p> <div class="language-hcl line-numbers-mode"><div class="highlight-lines"><br><br><br><br><br><br><br><br><br><br><br><div class="highlighted"> </div><br><br><br><br><br><br><br><br><br><br></div><pre class="language-hcl"><code><span class="token keyword">template</span> <span class="token punctuation">{</span>
+  <span class="token property">data</span> <span class="token punctuation">=</span> <span class="token heredoc string">&lt;&lt;EOF
+defaults
+   mode http
+
+frontend http_front
+   bind *:28888
+   default_backend http_back
+
+backend http_back
+    balance roundrobin
+    server-template mywebapp 2 _frontend._tcp.service.mesh.hashistack.consul resolvers consul resolve-opts allow-dup-ip resolve-prefer ipv4 check
+
+resolvers consul
+  nameserver consul 127.0.0.1:8600
+  accepted_payload_size 8192
+  hold valid 5s
+EOF</span>
+
+  <span class="token property">destination</span> <span class="token punctuation">=</span> <span class="token string">&quot;local/haproxy.cfg&quot;</span>
+<span class="token punctuation">}</span>
+</code></pre><div class="line-numbers-wrapper"><span class="line-number">1</span><br><span class="line-number">2</span><br><span class="line-number">3</span><br><span class="line-number">4</span><br><span class="line-number">5</span><br><span class="line-number">6</span><br><span class="line-number">7</span><br><span class="line-number">8</span><br><span class="line-number">9</span><br><span class="line-number">10</span><br><span class="line-number">11</span><br><span class="line-number">12</span><br><span class="line-number">13</span><br><span class="line-number">14</span><br><span class="line-number">15</span><br><span class="line-number">16</span><br><span class="line-number">17</span><br><span class="line-number">18</span><br><span class="line-number">19</span><br><span class="line-number">20</span><br><span class="line-number">21</span><br></div></div><details class="custom-block details"><summary>Full Example (mesh.nomad)</summary> <div class="language-hcl line-numbers-mode"><pre class="language-hcl"><code><span class="token comment"># nomad namespace apply -description &quot;ServiceMesh Sample&quot; mesh</span>
+
+<span class="token keyword">locals</span> <span class="token punctuation">{</span>
+  <span class="token property">mode</span>     <span class="token punctuation">=</span> <span class="token string">&quot;Legacy&quot;</span>
+  <span class="token property">namespace</span> <span class="token punctuation">=</span> <span class="token string">&quot;mesh&quot;</span>
+  <span class="token comment">#artifact = &quot;https://hashicorpjp.s3.ap-northeast-1.amazonaws.com/masa/Snapshots2021Jan_Nomad/frontback.tgz&quot;</span>
+  <span class="token property">artifact</span> <span class="token punctuation">=</span> <span class="token string">&quot;https://github.com/Great-Stone/Snapshots_2021Jan_Pseudo-containerized/raw/main/frontback.tgz&quot;</span>
+  <span class="token property">node</span> <span class="token punctuation">=</span> <span class="token string">&quot;https://github.com/Great-Stone/Snapshots_2021Jan_Pseudo-containerized/raw/main/nodejs-linux&quot;</span>
+  <span class="token property">subject</span>    <span class="token punctuation">=</span> <span class="token string">&quot;snapshot&quot;</span>
+<span class="token punctuation">}</span>
+
+<span class="token keyword">variables</span> <span class="token punctuation">{</span>
+  <span class="token property">frontend_port</span> <span class="token punctuation">=</span> <span class="token number">8080</span>
+  <span class="token property">upstream_port</span> <span class="token punctuation">=</span> <span class="token number">10000</span>
+<span class="token punctuation">}</span>
+
+<span class="token keyword">variable<span class="token type variable"> &quot;attrib_v1&quot; </span></span><span class="token punctuation">{</span>
+  <span class="token property">type</span> <span class="token punctuation">=</span> object(<span class="token punctuation">{</span>
+    <span class="token property">version</span>    <span class="token punctuation">=</span> string
+    <span class="token property">task_count</span> <span class="token punctuation">=</span> number
+    <span class="token property">text_color</span> <span class="token punctuation">=</span> string
+  <span class="token punctuation">}</span>)
+  <span class="token property">default</span> <span class="token punctuation">=</span> <span class="token punctuation">{</span>
+    <span class="token property">version</span>    <span class="token punctuation">=</span> <span class="token string">&quot;v1&quot;</span>
+    <span class="token property">task_count</span> <span class="token punctuation">=</span> <span class="token number">1</span>
+    <span class="token property">text_color</span> <span class="token punctuation">=</span> <span class="token string">&quot;green&quot;</span>
+  <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+
+<span class="token keyword">variable<span class="token type variable"> &quot;attrib_v2&quot; </span></span><span class="token punctuation">{</span>
+  <span class="token property">type</span> <span class="token punctuation">=</span> object(<span class="token punctuation">{</span>
+    <span class="token property">version</span>    <span class="token punctuation">=</span> string
+    <span class="token property">task_count</span> <span class="token punctuation">=</span> number
+    <span class="token property">text_color</span> <span class="token punctuation">=</span> string
+  <span class="token punctuation">}</span>)
+  <span class="token property">default</span> <span class="token punctuation">=</span> <span class="token punctuation">{</span>
+    <span class="token property">version</span>    <span class="token punctuation">=</span> <span class="token string">&quot;v2&quot;</span>
+    <span class="token property">task_count</span> <span class="token punctuation">=</span> <span class="token number">1</span>
+    <span class="token property">text_color</span> <span class="token punctuation">=</span> <span class="token string">&quot;red&quot;</span>
+  <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+
+job <span class="token string">&quot;frontback_job&quot;</span> <span class="token punctuation">{</span>
+
+  <span class="token property">region</span> <span class="token punctuation">=</span> <span class="token string">&quot;global&quot;</span>
+  <span class="token property">datacenters</span> <span class="token punctuation">=</span> <span class="token punctuation">[</span><span class="token string">&quot;hashistack&quot;</span><span class="token punctuation">]</span>
+  <span class="token property">namespace</span> <span class="token punctuation">=</span> local.namespace
+
+  <span class="token property">type</span> <span class="token punctuation">=</span> <span class="token string">&quot;service&quot;</span>
+
+  <span class="token keyword">constraint</span> <span class="token punctuation">{</span>
+    <span class="token property">attribute</span> <span class="token punctuation">=</span> <span class="token string">&quot;<span class="token interpolation"><span class="token punctuation">$</span><span class="token punctuation">{</span>meta<span class="token punctuation">.</span>subject<span class="token punctuation">}</span></span>&quot;</span>
+    <span class="token property">value</span>     <span class="token punctuation">=</span> local.subject
+  <span class="token punctuation">}</span>
+
+  <span class="token comment">#######################</span>
+  <span class="token comment">#                     #</span>
+  <span class="token comment">#      Backend v1     #</span>
+  <span class="token comment">#                     #</span>
+  <span class="token comment">#######################</span>
+
+  group <span class="token string">&quot;backend_group_v1&quot;</span> <span class="token punctuation">{</span>
+
+    <span class="token property">count</span> <span class="token punctuation">=</span> var.attrib_v1<span class="token punctuation">[</span><span class="token string">&quot;task_count&quot;</span><span class="token punctuation">]</span>
+
+    <span class="token keyword">consul</span> <span class="token punctuation">{</span>
+      <span class="token property">namespace</span> <span class="token punctuation">=</span> local.namespace
+    <span class="token punctuation">}</span>
+
+    <span class="token keyword">network</span> <span class="token punctuation">{</span>
+      <span class="token property">mode</span> <span class="token punctuation">=</span> <span class="token string">&quot;bridge&quot;</span>
+      port <span class="token string">&quot;http&quot;</span> <span class="token punctuation">{</span><span class="token punctuation">}</span>
+    <span class="token punctuation">}</span>
+
+    <span class="token keyword">service</span> <span class="token punctuation">{</span>
+      <span class="token property">name</span> <span class="token punctuation">=</span> <span class="token string">&quot;backend&quot;</span>
+      <span class="token property">port</span> <span class="token punctuation">=</span> <span class="token string">&quot;http&quot;</span>
+
+      <span class="token keyword">connect</span> <span class="token punctuation">{</span>
+        <span class="token keyword">sidecar_service</span> <span class="token punctuation">{</span><span class="token punctuation">}</span>
+      <span class="token punctuation">}</span>
+
+      <span class="token keyword">meta</span> <span class="token punctuation">{</span>
+        <span class="token property">version</span> <span class="token punctuation">=</span> var.attrib_v1<span class="token punctuation">[</span><span class="token string">&quot;version&quot;</span><span class="token punctuation">]</span>
+      <span class="token punctuation">}</span>
+
+      <span class="token keyword">check</span> <span class="token punctuation">{</span>
+        <span class="token property">type</span>     <span class="token punctuation">=</span> <span class="token string">&quot;http&quot;</span>
+        <span class="token property">path</span>     <span class="token punctuation">=</span> <span class="token string">&quot;/&quot;</span>
+        <span class="token property">interval</span> <span class="token punctuation">=</span> <span class="token string">&quot;5s&quot;</span>
+        <span class="token property">timeout</span>  <span class="token punctuation">=</span> <span class="token string">&quot;3s&quot;</span>
+      <span class="token punctuation">}</span>
+
+      <span class="token property">tags</span> <span class="token punctuation">=</span> <span class="token punctuation">[</span>
+        <span class="token string">&quot;Snapshots&quot;</span>,
+        <span class="token string">&quot;Backend&quot;</span>,
+        local.mode,
+        var.attrib_v1<span class="token punctuation">[</span><span class="token string">&quot;version&quot;</span><span class="token punctuation">]</span>
+      <span class="token punctuation">]</span>
+    <span class="token punctuation">}</span>
+
+    task <span class="token string">&quot;backend&quot;</span> <span class="token punctuation">{</span>
+
+      <span class="token property">driver</span> <span class="token punctuation">=</span> <span class="token string">&quot;exec&quot;</span>
+
+      <span class="token keyword">artifact</span> <span class="token punctuation">{</span>
+        <span class="token property">source</span> <span class="token punctuation">=</span> local.artifact
+      <span class="token punctuation">}</span>
+
+      <span class="token keyword">env</span> <span class="token punctuation">{</span>
+        <span class="token property">COLOR</span>   <span class="token punctuation">=</span> var.attrib_v1<span class="token punctuation">[</span><span class="token string">&quot;text_color&quot;</span><span class="token punctuation">]</span>
+        <span class="token property">MODE</span>    <span class="token punctuation">=</span> local.mode
+        <span class="token property">TASK_ID</span> <span class="token punctuation">=</span> NOMAD_ALLOC_INDEX
+        <span class="token property">ADDR</span>    <span class="token punctuation">=</span> NOMAD_ADDR_http
+        <span class="token property">PORT</span>    <span class="token punctuation">=</span> NOMAD_PORT_http
+        <span class="token property">VERSION</span> <span class="token punctuation">=</span> var.attrib_v1<span class="token punctuation">[</span><span class="token string">&quot;version&quot;</span><span class="token punctuation">]</span>
+        <span class="token comment"># IMG_SRC		= &quot;${local.img_dir}${var.attrib_v1[&quot;version&quot;]}.png&quot;</span>
+      <span class="token punctuation">}</span>
+
+      <span class="token keyword">config</span> <span class="token punctuation">{</span>
+        <span class="token property">command</span> <span class="token punctuation">=</span> <span class="token string">&quot;backend&quot;</span>
+      <span class="token punctuation">}</span>
+
+      <span class="token keyword">resources</span> <span class="token punctuation">{</span>
+        <span class="token property">memory</span> <span class="token punctuation">=</span> <span class="token number">32</span>  <span class="token comment"># reserve 32 MB</span>
+        <span class="token property">cpu</span>    <span class="token punctuation">=</span> <span class="token number">100</span> <span class="token comment"># reserve 100 MHz</span>
+      <span class="token punctuation">}</span>
+
+    <span class="token punctuation">}</span>
+
+    <span class="token keyword">reschedule</span> <span class="token punctuation">{</span>
+      <span class="token property">delay</span>          <span class="token punctuation">=</span> <span class="token string">&quot;10s&quot;</span>
+      <span class="token property">delay_function</span> <span class="token punctuation">=</span> <span class="token string">&quot;constant&quot;</span>
+    <span class="token punctuation">}</span>
+  <span class="token punctuation">}</span>
+
+  <span class="token comment">#######################</span>
+  <span class="token comment">#                     #</span>
+  <span class="token comment">#      Backend v2     #</span>
+  <span class="token comment">#                     #</span>
+  <span class="token comment">#######################</span>
+
+  group <span class="token string">&quot;backend_group_v2&quot;</span> <span class="token punctuation">{</span>
+
+    <span class="token property">count</span> <span class="token punctuation">=</span> var.attrib_v2<span class="token punctuation">[</span><span class="token string">&quot;task_count&quot;</span><span class="token punctuation">]</span>
+
+    <span class="token keyword">consul</span> <span class="token punctuation">{</span>
+      <span class="token property">namespace</span> <span class="token punctuation">=</span> local.namespace
+    <span class="token punctuation">}</span>
+
+    <span class="token keyword">network</span> <span class="token punctuation">{</span>
+      <span class="token property">mode</span> <span class="token punctuation">=</span> <span class="token string">&quot;bridge&quot;</span>
+      port <span class="token string">&quot;http&quot;</span> <span class="token punctuation">{</span><span class="token punctuation">}</span>
+    <span class="token punctuation">}</span>
+
+    <span class="token keyword">service</span> <span class="token punctuation">{</span>
+      <span class="token property">name</span> <span class="token punctuation">=</span> <span class="token string">&quot;backend&quot;</span>
+      <span class="token property">port</span> <span class="token punctuation">=</span> <span class="token string">&quot;http&quot;</span>
+
+      <span class="token keyword">connect</span> <span class="token punctuation">{</span>
+        <span class="token keyword">sidecar_service</span> <span class="token punctuation">{</span><span class="token punctuation">}</span>
+      <span class="token punctuation">}</span>
+
+      <span class="token keyword">meta</span> <span class="token punctuation">{</span>
+        <span class="token property">version</span> <span class="token punctuation">=</span> var.attrib_v2<span class="token punctuation">[</span><span class="token string">&quot;version&quot;</span><span class="token punctuation">]</span>
+      <span class="token punctuation">}</span>
+
+      <span class="token keyword">check</span> <span class="token punctuation">{</span>
+        <span class="token property">type</span>     <span class="token punctuation">=</span> <span class="token string">&quot;http&quot;</span>
+        <span class="token property">path</span>     <span class="token punctuation">=</span> <span class="token string">&quot;/&quot;</span>
+        <span class="token property">interval</span> <span class="token punctuation">=</span> <span class="token string">&quot;5s&quot;</span>
+        <span class="token property">timeout</span>  <span class="token punctuation">=</span> <span class="token string">&quot;3s&quot;</span>
+      <span class="token punctuation">}</span>
+
+      <span class="token property">tags</span> <span class="token punctuation">=</span> <span class="token punctuation">[</span>
+        <span class="token string">&quot;Snapshots&quot;</span>,
+        <span class="token string">&quot;Backend&quot;</span>,
+        local.mode,
+        var.attrib_v2<span class="token punctuation">[</span><span class="token string">&quot;version&quot;</span><span class="token punctuation">]</span>
+      <span class="token punctuation">]</span>
+    <span class="token punctuation">}</span>
+
+    task <span class="token string">&quot;backend&quot;</span> <span class="token punctuation">{</span>
+
+      <span class="token property">driver</span> <span class="token punctuation">=</span> <span class="token string">&quot;exec&quot;</span>
+
+      <span class="token keyword">artifact</span> <span class="token punctuation">{</span>
+        <span class="token property">source</span> <span class="token punctuation">=</span> local.artifact
+      <span class="token punctuation">}</span>
+
+      <span class="token keyword">env</span> <span class="token punctuation">{</span>
+        <span class="token property">COLOR</span>   <span class="token punctuation">=</span> var.attrib_v2<span class="token punctuation">[</span><span class="token string">&quot;text_color&quot;</span><span class="token punctuation">]</span>
+        <span class="token property">MODE</span>    <span class="token punctuation">=</span> local.mode
+        <span class="token property">TASK_ID</span> <span class="token punctuation">=</span> NOMAD_ALLOC_INDEX
+        <span class="token property">ADDR</span>    <span class="token punctuation">=</span> NOMAD_ADDR_http
+        <span class="token property">PORT</span>    <span class="token punctuation">=</span> NOMAD_PORT_http
+        <span class="token property">VERSION</span> <span class="token punctuation">=</span> var.attrib_v2<span class="token punctuation">[</span><span class="token string">&quot;version&quot;</span><span class="token punctuation">]</span>
+        <span class="token comment"># IMG_SRC		= &quot;${local.img_dir}${var.attrib_v2[&quot;version&quot;]}.png&quot;</span>
+      <span class="token punctuation">}</span>
+
+      <span class="token keyword">config</span> <span class="token punctuation">{</span>
+        <span class="token property">command</span> <span class="token punctuation">=</span> <span class="token string">&quot;backend&quot;</span>
+      <span class="token punctuation">}</span>
+
+      <span class="token keyword">resources</span> <span class="token punctuation">{</span>
+        <span class="token property">memory</span> <span class="token punctuation">=</span> <span class="token number">32</span>  <span class="token comment"># reserve 32 MB</span>
+        <span class="token property">cpu</span>    <span class="token punctuation">=</span> <span class="token number">100</span> <span class="token comment"># reserve 100 MHz</span>
+      <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span>
+
+    <span class="token keyword">reschedule</span> <span class="token punctuation">{</span>
+      <span class="token property">delay</span>          <span class="token punctuation">=</span> <span class="token string">&quot;10s&quot;</span>
+      <span class="token property">delay_function</span> <span class="token punctuation">=</span> <span class="token string">&quot;constant&quot;</span>
+    <span class="token punctuation">}</span>
+  <span class="token punctuation">}</span>
+
+  <span class="token comment">######################</span>
+  <span class="token comment">#                    #</span>
+  <span class="token comment">#      Frontend      #</span>
+  <span class="token comment">#                    #</span>
+  <span class="token comment">######################</span>
+
+  group <span class="token string">&quot;frontend_group&quot;</span> <span class="token punctuation">{</span>
+
+    <span class="token property">count</span> <span class="token punctuation">=</span> <span class="token number">1</span>
+
+    <span class="token keyword">consul</span> <span class="token punctuation">{</span>
+      <span class="token property">namespace</span> <span class="token punctuation">=</span> local.namespace
+    <span class="token punctuation">}</span>
+
+    <span class="token keyword">network</span> <span class="token punctuation">{</span>
+      <span class="token property">mode</span> <span class="token punctuation">=</span> <span class="token string">&quot;bridge&quot;</span>
+      port <span class="token string">&quot;http&quot;</span> <span class="token punctuation">{</span>
+        <span class="token comment">// static = var.frontend_port</span>
+      <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span>
+
+    <span class="token keyword">service</span> <span class="token punctuation">{</span>
+      <span class="token property">name</span> <span class="token punctuation">=</span> <span class="token string">&quot;frontend&quot;</span>
+      <span class="token property">port</span> <span class="token punctuation">=</span> <span class="token string">&quot;http&quot;</span>
+
+      <span class="token keyword">connect</span> <span class="token punctuation">{</span>
+        <span class="token keyword">sidecar_service</span> <span class="token punctuation">{</span>
+          <span class="token keyword">proxy</span> <span class="token punctuation">{</span>
+            <span class="token keyword">upstreams</span> <span class="token punctuation">{</span>
+              <span class="token property">destination_name</span> <span class="token punctuation">=</span> <span class="token string">&quot;backend&quot;</span>
+              <span class="token property">local_bind_port</span>  <span class="token punctuation">=</span> var.upstream_port
+            <span class="token punctuation">}</span>
+          <span class="token punctuation">}</span>
+        <span class="token punctuation">}</span>
+      <span class="token punctuation">}</span>
+
+			<span class="token comment">// check {</span>
+			<span class="token comment">// 	type     = &quot;http&quot;</span>
+			<span class="token comment">// 	path     = &quot;/&quot;</span>
+			<span class="token comment">// 	interval = &quot;5s&quot;</span>
+			<span class="token comment">// 	timeout  = &quot;3s&quot;</span>
+			<span class="token comment">// }</span>
+
+      <span class="token property">tags</span> <span class="token punctuation">=</span> <span class="token punctuation">[</span>
+        local.mode,
+        <span class="token string">&quot;Snapshots&quot;</span>,
+        <span class="token string">&quot;Frontend&quot;</span>
+      <span class="token punctuation">]</span>
+    <span class="token punctuation">}</span>
+
+    task <span class="token string">&quot;frontend&quot;</span> <span class="token punctuation">{</span>
+
+      <span class="token property">driver</span> <span class="token punctuation">=</span> <span class="token string">&quot;exec&quot;</span>
+
+      <span class="token keyword">artifact</span> <span class="token punctuation">{</span>
+        <span class="token property">source</span> <span class="token punctuation">=</span> local.node
+      <span class="token punctuation">}</span>
+
+      <span class="token keyword">env</span> <span class="token punctuation">{</span>
+        <span class="token property">PORT</span>         <span class="token punctuation">=</span> NOMAD_PORT_http
+        <span class="token property">UPSTREAM_URL</span> <span class="token punctuation">=</span> <span class="token string">&quot;http://<span class="token interpolation"><span class="token punctuation">$</span><span class="token punctuation">{</span>NOMAD_UPSTREAM_ADDR_backend<span class="token punctuation">}</span></span>&quot;</span>
+      <span class="token punctuation">}</span>
+
+      <span class="token keyword">config</span> <span class="token punctuation">{</span>
+        <span class="token property">command</span> <span class="token punctuation">=</span> <span class="token string">&quot;nodejs-linux&quot;</span>
+      <span class="token punctuation">}</span>
+
+      <span class="token keyword">resources</span> <span class="token punctuation">{</span>
+        <span class="token property">memory</span> <span class="token punctuation">=</span> <span class="token number">32</span>  <span class="token comment"># reserve 32 MB</span>
+        <span class="token property">cpu</span>    <span class="token punctuation">=</span> <span class="token number">100</span> <span class="token comment"># reserve 100 MHz</span>
+      <span class="token punctuation">}</span>
+
+    <span class="token punctuation">}</span>
+
+    <span class="token keyword">reschedule</span> <span class="token punctuation">{</span>
+      <span class="token property">delay</span>          <span class="token punctuation">=</span> <span class="token string">&quot;10s&quot;</span>
+      <span class="token property">delay_function</span> <span class="token punctuation">=</span> <span class="token string">&quot;constant&quot;</span>
+    <span class="token punctuation">}</span>
+  <span class="token punctuation">}</span>
+
+  <span class="token comment">######################</span>
+  <span class="token comment">#                    #</span>
+  <span class="token comment">#      haproxy      #</span>
+  <span class="token comment">#                    #</span>
+  <span class="token comment">######################</span>
+
+  group <span class="token string">&quot;haproxy&quot;</span> <span class="token punctuation">{</span>
+    <span class="token property">count</span> <span class="token punctuation">=</span> <span class="token number">1</span>
+
+    <span class="token keyword">consul</span> <span class="token punctuation">{</span>
+      <span class="token property">namespace</span> <span class="token punctuation">=</span> local.namespace
+    <span class="token punctuation">}</span>
+
+    <span class="token keyword">network</span> <span class="token punctuation">{</span>
+      port <span class="token string">&quot;http&quot;</span> <span class="token punctuation">{</span>
+        <span class="token property">static</span> <span class="token punctuation">=</span> <span class="token number">28888</span>
+      <span class="token punctuation">}</span>
+
+      port <span class="token string">&quot;stats&quot;</span> <span class="token punctuation">{</span>
+        <span class="token property">static</span> <span class="token punctuation">=</span> <span class="token number">21936</span>
+      <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span>
+
+    task <span class="token string">&quot;haproxy&quot;</span> <span class="token punctuation">{</span>
+      <span class="token property">driver</span> <span class="token punctuation">=</span> <span class="token string">&quot;docker&quot;</span>
+
+      <span class="token keyword">config</span> <span class="token punctuation">{</span>
+        <span class="token property">image</span>        <span class="token punctuation">=</span> <span class="token string">&quot;haproxy:2.0&quot;</span>
+        <span class="token property">network_mode</span> <span class="token punctuation">=</span> <span class="token string">&quot;host&quot;</span>
+
+        <span class="token property">volumes</span> <span class="token punctuation">=</span> <span class="token punctuation">[</span>
+          <span class="token string">&quot;local/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg&quot;</span>,
+        <span class="token punctuation">]</span>
+
+        <span class="token property">ports</span> <span class="token punctuation">=</span> <span class="token punctuation">[</span><span class="token string">&quot;http&quot;</span>, <span class="token string">&quot;stats&quot;</span><span class="token punctuation">]</span>
+      <span class="token punctuation">}</span>
+
+      <span class="token keyword">template</span> <span class="token punctuation">{</span>
+        <span class="token property">data</span> <span class="token punctuation">=</span> <span class="token heredoc string">&lt;&lt;EOF
+defaults
+   mode http
+
+frontend stats
+   bind *:21936
+   stats uri /
+   stats show-legends
+   no log
+
+frontend http_front
+   bind *:28888
+   default_backend http_back
+
+backend http_back
+    balance roundrobin
+    server-template mywebapp 2 _frontend._tcp.service.mesh.hashistack.consul resolvers consul resolve-opts allow-dup-ip resolve-prefer ipv4 check
+
+resolvers consul
+  nameserver consul 127.0.0.1:8600
+  accepted_payload_size 8192
+  hold valid 5s
+EOF</span>
+
+        <span class="token property">destination</span> <span class="token punctuation">=</span> <span class="token string">&quot;local/haproxy.cfg&quot;</span>
+      <span class="token punctuation">}</span>
+
+      <span class="token keyword">service</span> <span class="token punctuation">{</span>
+        <span class="token property">name</span> <span class="token punctuation">=</span> <span class="token string">&quot;haproxy&quot;</span>
+
+        <span class="token keyword">check</span> <span class="token punctuation">{</span>
+          <span class="token property">name</span>     <span class="token punctuation">=</span> <span class="token string">&quot;alive&quot;</span>
+          <span class="token property">type</span>     <span class="token punctuation">=</span> <span class="token string">&quot;tcp&quot;</span>
+          <span class="token property">port</span>     <span class="token punctuation">=</span> <span class="token string">&quot;http&quot;</span>
+          <span class="token property">interval</span> <span class="token punctuation">=</span> <span class="token string">&quot;10s&quot;</span>
+          <span class="token property">timeout</span>  <span class="token punctuation">=</span> <span class="token string">&quot;2s&quot;</span>
+        <span class="token punctuation">}</span>
+      <span class="token punctuation">}</span>
+
+      <span class="token keyword">resources</span> <span class="token punctuation">{</span>
+        <span class="token property">cpu</span>    <span class="token punctuation">=</span> <span class="token number">200</span>
+        <span class="token property">memory</span> <span class="token punctuation">=</span> <span class="token number">128</span>
+
+        <span class="token keyword">network</span> <span class="token punctuation">{</span>
+          <span class="token property">mbits</span> <span class="token punctuation">=</span> <span class="token number">10</span>
+
+          <span class="token comment">// port &quot;http&quot; {</span>
+          <span class="token comment">//   static = 28888</span>
+          <span class="token comment">//   to = 8888</span>
+          <span class="token comment">// }</span>
+
+          <span class="token comment">// port &quot;stats&quot; {</span>
+          <span class="token comment">//   static = 21936</span>
+          <span class="token comment">//   to = 1936</span>
+          <span class="token comment">// }</span>
+        <span class="token punctuation">}</span>
+      <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span>
+  <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+</code></pre> <div class="line-numbers-wrapper"><span class="line-number">1</span><br><span class="line-number">2</span><br><span class="line-number">3</span><br><span class="line-number">4</span><br><span class="line-number">5</span><br><span class="line-number">6</span><br><span class="line-number">7</span><br><span class="line-number">8</span><br><span class="line-number">9</span><br><span class="line-number">10</span><br><span class="line-number">11</span><br><span class="line-number">12</span><br><span class="line-number">13</span><br><span class="line-number">14</span><br><span class="line-number">15</span><br><span class="line-number">16</span><br><span class="line-number">17</span><br><span class="line-number">18</span><br><span class="line-number">19</span><br><span class="line-number">20</span><br><span class="line-number">21</span><br><span class="line-number">22</span><br><span class="line-number">23</span><br><span class="line-number">24</span><br><span class="line-number">25</span><br><span class="line-number">26</span><br><span class="line-number">27</span><br><span class="line-number">28</span><br><span class="line-number">29</span><br><span class="line-number">30</span><br><span class="line-number">31</span><br><span class="line-number">32</span><br><span class="line-number">33</span><br><span class="line-number">34</span><br><span class="line-number">35</span><br><span class="line-number">36</span><br><span class="line-number">37</span><br><span class="line-number">38</span><br><span class="line-number">39</span><br><span class="line-number">40</span><br><span class="line-number">41</span><br><span class="line-number">42</span><br><span class="line-number">43</span><br><span class="line-number">44</span><br><span class="line-number">45</span><br><span class="line-number">46</span><br><span class="line-number">47</span><br><span class="line-number">48</span><br><span class="line-number">49</span><br><span class="line-number">50</span><br><span class="line-number">51</span><br><span class="line-number">52</span><br><span class="line-number">53</span><br><span class="line-number">54</span><br><span class="line-number">55</span><br><span class="line-number">56</span><br><span class="line-number">57</span><br><span class="line-number">58</span><br><span class="line-number">59</span><br><span class="line-number">60</span><br><span class="line-number">61</span><br><span class="line-number">62</span><br><span class="line-number">63</span><br><span class="line-number">64</span><br><span class="line-number">65</span><br><span class="line-number">66</span><br><span class="line-number">67</span><br><span class="line-number">68</span><br><span class="line-number">69</span><br><span class="line-number">70</span><br><span class="line-number">71</span><br><span class="line-number">72</span><br><span class="line-number">73</span><br><span class="line-number">74</span><br><span class="line-number">75</span><br><span class="line-number">76</span><br><span class="line-number">77</span><br><span class="line-number">78</span><br><span class="line-number">79</span><br><span class="line-number">80</span><br><span class="line-number">81</span><br><span class="line-number">82</span><br><span class="line-number">83</span><br><span class="line-number">84</span><br><span class="line-number">85</span><br><span class="line-number">86</span><br><span class="line-number">87</span><br><span class="line-number">88</span><br><span class="line-number">89</span><br><span class="line-number">90</span><br><span class="line-number">91</span><br><span class="line-number">92</span><br><span class="line-number">93</span><br><span class="line-number">94</span><br><span class="line-number">95</span><br><span class="line-number">96</span><br><span class="line-number">97</span><br><span class="line-number">98</span><br><span class="line-number">99</span><br><span class="line-number">100</span><br><span class="line-number">101</span><br><span class="line-number">102</span><br><span class="line-number">103</span><br><span class="line-number">104</span><br><span class="line-number">105</span><br><span class="line-number">106</span><br><span class="line-number">107</span><br><span class="line-number">108</span><br><span class="line-number">109</span><br><span class="line-number">110</span><br><span class="line-number">111</span><br><span class="line-number">112</span><br><span class="line-number">113</span><br><span class="line-number">114</span><br><span class="line-number">115</span><br><span class="line-number">116</span><br><span class="line-number">117</span><br><span class="line-number">118</span><br><span class="line-number">119</span><br><span class="line-number">120</span><br><span class="line-number">121</span><br><span class="line-number">122</span><br><span class="line-number">123</span><br><span class="line-number">124</span><br><span class="line-number">125</span><br><span class="line-number">126</span><br><span class="line-number">127</span><br><span class="line-number">128</span><br><span class="line-number">129</span><br><span class="line-number">130</span><br><span class="line-number">131</span><br><span class="line-number">132</span><br><span class="line-number">133</span><br><span class="line-number">134</span><br><span class="line-number">135</span><br><span class="line-number">136</span><br><span class="line-number">137</span><br><span class="line-number">138</span><br><span class="line-number">139</span><br><span class="line-number">140</span><br><span class="line-number">141</span><br><span class="line-number">142</span><br><span class="line-number">143</span><br><span class="line-number">144</span><br><span class="line-number">145</span><br><span class="line-number">146</span><br><span class="line-number">147</span><br><span class="line-number">148</span><br><span class="line-number">149</span><br><span class="line-number">150</span><br><span class="line-number">151</span><br><span class="line-number">152</span><br><span class="line-number">153</span><br><span class="line-number">154</span><br><span class="line-number">155</span><br><span class="line-number">156</span><br><span class="line-number">157</span><br><span class="line-number">158</span><br><span class="line-number">159</span><br><span class="line-number">160</span><br><span class="line-number">161</span><br><span class="line-number">162</span><br><span class="line-number">163</span><br><span class="line-number">164</span><br><span class="line-number">165</span><br><span class="line-number">166</span><br><span class="line-number">167</span><br><span class="line-number">168</span><br><span class="line-number">169</span><br><span class="line-number">170</span><br><span class="line-number">171</span><br><span class="line-number">172</span><br><span class="line-number">173</span><br><span class="line-number">174</span><br><span class="line-number">175</span><br><span class="line-number">176</span><br><span class="line-number">177</span><br><span class="line-number">178</span><br><span class="line-number">179</span><br><span class="line-number">180</span><br><span class="line-number">181</span><br><span class="line-number">182</span><br><span class="line-number">183</span><br><span class="line-number">184</span><br><span class="line-number">185</span><br><span class="line-number">186</span><br><span class="line-number">187</span><br><span class="line-number">188</span><br><span class="line-number">189</span><br><span class="line-number">190</span><br><span class="line-number">191</span><br><span class="line-number">192</span><br><span class="line-number">193</span><br><span class="line-number">194</span><br><span class="line-number">195</span><br><span class="line-number">196</span><br><span class="line-number">197</span><br><span class="line-number">198</span><br><span class="line-number">199</span><br><span class="line-number">200</span><br><span class="line-number">201</span><br><span class="line-number">202</span><br><span class="line-number">203</span><br><span class="line-number">204</span><br><span class="line-number">205</span><br><span class="line-number">206</span><br><span class="line-number">207</span><br><span class="line-number">208</span><br><span class="line-number">209</span><br><span class="line-number">210</span><br><span class="line-number">211</span><br><span class="line-number">212</span><br><span class="line-number">213</span><br><span class="line-number">214</span><br><span class="line-number">215</span><br><span class="line-number">216</span><br><span class="line-number">217</span><br><span class="line-number">218</span><br><span class="line-number">219</span><br><span class="line-number">220</span><br><span class="line-number">221</span><br><span class="line-number">222</span><br><span class="line-number">223</span><br><span class="line-number">224</span><br><span class="line-number">225</span><br><span class="line-number">226</span><br><span class="line-number">227</span><br><span class="line-number">228</span><br><span class="line-number">229</span><br><span class="line-number">230</span><br><span class="line-number">231</span><br><span class="line-number">232</span><br><span class="line-number">233</span><br><span class="line-number">234</span><br><span class="line-number">235</span><br><span class="line-number">236</span><br><span class="line-number">237</span><br><span class="line-number">238</span><br><span class="line-number">239</span><br><span class="line-number">240</span><br><span class="line-number">241</span><br><span class="line-number">242</span><br><span class="line-number">243</span><br><span class="line-number">244</span><br><span class="line-number">245</span><br><span class="line-number">246</span><br><span class="line-number">247</span><br><span class="line-number">248</span><br><span class="line-number">249</span><br><span class="line-number">250</span><br><span class="line-number">251</span><br><span class="line-number">252</span><br><span class="line-number">253</span><br><span class="line-number">254</span><br><span class="line-number">255</span><br><span class="line-number">256</span><br><span class="line-number">257</span><br><span class="line-number">258</span><br><span class="line-number">259</span><br><span class="line-number">260</span><br><span class="line-number">261</span><br><span class="line-number">262</span><br><span class="line-number">263</span><br><span class="line-number">264</span><br><span class="line-number">265</span><br><span class="line-number">266</span><br><span class="line-number">267</span><br><span class="line-number">268</span><br><span class="line-number">269</span><br><span class="line-number">270</span><br><span class="line-number">271</span><br><span class="line-number">272</span><br><span class="line-number">273</span><br><span class="line-number">274</span><br><span class="line-number">275</span><br><span class="line-number">276</span><br><span class="line-number">277</span><br><span class="line-number">278</span><br><span class="line-number">279</span><br><span class="line-number">280</span><br><span class="line-number">281</span><br><span class="line-number">282</span><br><span class="line-number">283</span><br><span class="line-number">284</span><br><span class="line-number">285</span><br><span class="line-number">286</span><br><span class="line-number">287</span><br><span class="line-number">288</span><br><span class="line-number">289</span><br><span class="line-number">290</span><br><span class="line-number">291</span><br><span class="line-number">292</span><br><span class="line-number">293</span><br><span class="line-number">294</span><br><span class="line-number">295</span><br><span class="line-number">296</span><br><span class="line-number">297</span><br><span class="line-number">298</span><br><span class="line-number">299</span><br><span class="line-number">300</span><br><span class="line-number">301</span><br><span class="line-number">302</span><br><span class="line-number">303</span><br><span class="line-number">304</span><br><span class="line-number">305</span><br><span class="line-number">306</span><br><span class="line-number">307</span><br><span class="line-number">308</span><br><span class="line-number">309</span><br><span class="line-number">310</span><br><span class="line-number">311</span><br><span class="line-number">312</span><br><span class="line-number">313</span><br><span class="line-number">314</span><br><span class="line-number">315</span><br><span class="line-number">316</span><br><span class="line-number">317</span><br><span class="line-number">318</span><br><span class="line-number">319</span><br><span class="line-number">320</span><br><span class="line-number">321</span><br><span class="line-number">322</span><br><span class="line-number">323</span><br><span class="line-number">324</span><br><span class="line-number">325</span><br><span class="line-number">326</span><br><span class="line-number">327</span><br><span class="line-number">328</span><br><span class="line-number">329</span><br><span class="line-number">330</span><br><span class="line-number">331</span><br><span class="line-number">332</span><br><span class="line-number">333</span><br><span class="line-number">334</span><br><span class="line-number">335</span><br><span class="line-number">336</span><br><span class="line-number">337</span><br><span class="line-number">338</span><br><span class="line-number">339</span><br><span class="line-number">340</span><br><span class="line-number">341</span><br><span class="line-number">342</span><br><span class="line-number">343</span><br><span class="line-number">344</span><br><span class="line-number">345</span><br><span class="line-number">346</span><br><span class="line-number">347</span><br><span class="line-number">348</span><br><span class="line-number">349</span><br><span class="line-number">350</span><br><span class="line-number">351</span><br><span class="line-number">352</span><br><span class="line-number">353</span><br><span class="line-number">354</span><br><span class="line-number">355</span><br><span class="line-number">356</span><br><span class="line-number">357</span><br><span class="line-number">358</span><br><span class="line-number">359</span><br><span class="line-number">360</span><br><span class="line-number">361</span><br><span class="line-number">362</span><br><span class="line-number">363</span><br><span class="line-number">364</span><br><span class="line-number">365</span><br><span class="line-number">366</span><br><span class="line-number">367</span><br><span class="line-number">368</span><br><span class="line-number">369</span><br><span class="line-number">370</span><br><span class="line-number">371</span><br><span class="line-number">372</span><br><span class="line-number">373</span><br><span class="line-number">374</span><br><span class="line-number">375</span><br><span class="line-number">376</span><br><span class="line-number">377</span><br><span class="line-number">378</span><br><span class="line-number">379</span><br><span class="line-number">380</span><br><span class="line-number">381</span><br><span class="line-number">382</span><br><span class="line-number">383</span><br><span class="line-number">384</span><br><span class="line-number">385</span><br><span class="line-number">386</span><br><span class="line-number">387</span><br><span class="line-number">388</span><br><span class="line-number">389</span><br><span class="line-number">390</span><br><span class="line-number">391</span><br><span class="line-number">392</span><br><span class="line-number">393</span><br><span class="line-number">394</span><br></div></div></details></div> <footer class="page-edit"><!----> <div class="last-updated"><span class="prefix">Last Updated:</span> <span class="time">9/1/2021, 11:29:16 AM</span></div></footer> <div class="page-nav"><p class="inner"><span class="prev">
+      ←
+      <a href="/04-HashiCorp/07-Nomad/02-Config/common.html" class="prev">
+        Nomad 공통 설정
+      </a></span> <span class="next"><a href="/04-HashiCorp/07-Nomad/02-Config/csi-nfs.html">
+        nomad csi (nfs)
+      </a>
+      →
+    </span></p></div> </main></div><div class="global-ui"><!----><!----></div></div>
+    <script src="/assets/js/app.b6bccdf7.js" defer></script><script src="/assets/js/3.e2e6689d.js" defer></script><script src="/assets/js/150.d79e3e7b.js" defer></script><script src="/assets/js/25.1d118ed6.js" defer></script>
+  </body>
+</html>

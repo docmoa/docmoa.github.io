@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>02. SideCar | docmoa</title>
+    <meta name="generator" content="VuePress 1.8.2">
+    <link rel="icon" href="/favicon.ico">
+    <link rel="manifest" href="/manifest.json">
+    <meta name="description" content="Consul Service Mesh on Kubernetes (Ent)">
+    <meta name="image" content="https://learn.hashicorp.com/img/consul/web-api-proxy.png">
+    <meta name="twitter:title" content="02. SideCar">
+    <meta name="twitter:description" content="Sidecar Proxy는 애플리케이션 컨테이너와 함께 동일 Pod상에 배포됨으로 localhost 로 통신할 수 있습니다. 사용자가 다른서비스에 대한 요청을 Sidecar Proxy에 지정하면 해당 요청을 맵핑된 다른 서비스로 전달합니다. 이 방식은 기존 개발자가 로컬에서 개발하는 환경과 동일하게 동작합니다. UI웹을 로컬 9090포트로 실행하고 백엔드 앱을 8080 포트로 실행한경우 UI웹은 백엔드 앱을 localhost:8080 으로 호출합니다. Consul Sidecar Proxy는 localhost 로 요청되는 포트를 지정한 Upstream 서비스로 전달하는 규칙을 처리하며, 여기에는 mTLS가 자동으로 구성됩니다.">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content="https://learn.hashicorp.com/img/consul/web-api-proxy.png">
+    <meta name="twitter:url" content="https://docmoa.github.io/04-HashiCorp/04-Consul/06-on_Kubernetes/ServiceMesh101/02-SideCar.html">
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="02. SideCar">
+    <meta property="og:description" content="Sidecar Proxy는 애플리케이션 컨테이너와 함께 동일 Pod상에 배포됨으로 localhost 로 통신할 수 있습니다. 사용자가 다른서비스에 대한 요청을 Sidecar Proxy에 지정하면 해당 요청을 맵핑된 다른 서비스로 전달합니다. 이 방식은 기존 개발자가 로컬에서 개발하는 환경과 동일하게 동작합니다. UI웹을 로컬 9090포트로 실행하고 백엔드 앱을 8080 포트로 실행한경우 UI웹은 백엔드 앱을 localhost:8080 으로 호출합니다. Consul Sidecar Proxy는 localhost 로 요청되는 포트를 지정한 Upstream 서비스로 전달하는 규칙을 처리하며, 여기에는 mTLS가 자동으로 구성됩니다.">
+    <meta property="og:image" content="https://learn.hashicorp.com/img/consul/web-api-proxy.png">
+    <meta property="og:url" content="https://docmoa.github.io/04-HashiCorp/04-Consul/06-on_Kubernetes/ServiceMesh101/02-SideCar.html">
+    <meta property="og:site_name" content="docmoa">
+    <meta property="article:tag" content="Consul">
+    <meta itemprop="name" content="02. SideCar">
+    <meta itemprop="description" content="Sidecar Proxy는 애플리케이션 컨테이너와 함께 동일 Pod상에 배포됨으로 localhost 로 통신할 수 있습니다. 사용자가 다른서비스에 대한 요청을 Sidecar Proxy에 지정하면 해당 요청을 맵핑된 다른 서비스로 전달합니다. 이 방식은 기존 개발자가 로컬에서 개발하는 환경과 동일하게 동작합니다. UI웹을 로컬 9090포트로 실행하고 백엔드 앱을 8080 포트로 실행한경우 UI웹은 백엔드 앱을 localhost:8080 으로 호출합니다. Consul Sidecar Proxy는 localhost 로 요청되는 포트를 지정한 Upstream 서비스로 전달하는 규칙을 처리하며, 여기에는 mTLS가 자동으로 구성됩니다.">
+    <meta itemprop="image" content="https://learn.hashicorp.com/img/consul/web-api-proxy.png">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="msapplication-TileImage" content="/image/docmoa-144.png">
+    
+    <link rel="preload" href="/assets/css/0.styles.af8b0614.css" as="style"><link rel="preload" href="/assets/js/app.b6bccdf7.js" as="script"><link rel="preload" href="/assets/js/3.e2e6689d.js" as="script"><link rel="preload" href="/assets/js/13.e571a1b3.js" as="script"><link rel="preload" href="/assets/js/25.1d118ed6.js" as="script"><link rel="prefetch" href="/assets/js/10.41eab043.js"><link rel="prefetch" href="/assets/js/100.31b5ce25.js"><link rel="prefetch" href="/assets/js/101.798b9f8f.js"><link rel="prefetch" href="/assets/js/102.9211c39d.js"><link rel="prefetch" href="/assets/js/103.cc6f5ead.js"><link rel="prefetch" href="/assets/js/104.da62b735.js"><link rel="prefetch" href="/assets/js/105.790f3a83.js"><link rel="prefetch" href="/assets/js/106.0e0d0a2b.js"><link rel="prefetch" href="/assets/js/107.7ead3764.js"><link rel="prefetch" href="/assets/js/108.7882c9f0.js"><link rel="prefetch" href="/assets/js/109.34514d43.js"><link rel="prefetch" href="/assets/js/11.e2b6598a.js"><link rel="prefetch" href="/assets/js/110.ead7a65c.js"><link rel="prefetch" href="/assets/js/111.c50b2996.js"><link rel="prefetch" href="/assets/js/112.65a2eb01.js"><link rel="prefetch" href="/assets/js/113.c7860b5f.js"><link rel="prefetch" href="/assets/js/114.d25f85e2.js"><link rel="prefetch" href="/assets/js/115.363b8cca.js"><link rel="prefetch" href="/assets/js/116.ea4d267a.js"><link rel="prefetch" href="/assets/js/117.f61c271d.js"><link rel="prefetch" href="/assets/js/118.429d7367.js"><link rel="prefetch" href="/assets/js/119.1ba985ba.js"><link rel="prefetch" href="/assets/js/12.a80efdb0.js"><link rel="prefetch" href="/assets/js/120.72bdb80d.js"><link rel="prefetch" href="/assets/js/121.968a83ab.js"><link rel="prefetch" href="/assets/js/122.1ba4c5d7.js"><link rel="prefetch" href="/assets/js/123.0bb37848.js"><link rel="prefetch" href="/assets/js/124.1a795cfb.js"><link rel="prefetch" href="/assets/js/125.58270fa8.js"><link rel="prefetch" href="/assets/js/126.a2c73a6e.js"><link rel="prefetch" href="/assets/js/127.85068fbf.js"><link rel="prefetch" href="/assets/js/128.6fe1781a.js"><link rel="prefetch" href="/assets/js/129.12ac7230.js"><link rel="prefetch" href="/assets/js/130.03693392.js"><link rel="prefetch" href="/assets/js/131.3e5550f9.js"><link rel="prefetch" href="/assets/js/132.67bb2d37.js"><link rel="prefetch" href="/assets/js/133.867564cc.js"><link rel="prefetch" href="/assets/js/134.46c75143.js"><link rel="prefetch" href="/assets/js/135.8b852def.js"><link rel="prefetch" href="/assets/js/136.56b89087.js"><link rel="prefetch" href="/assets/js/137.b05668ba.js"><link rel="prefetch" href="/assets/js/138.ebbb01fa.js"><link rel="prefetch" href="/assets/js/139.ec684c2c.js"><link rel="prefetch" href="/assets/js/14.69a5e456.js"><link rel="prefetch" href="/assets/js/140.14339d98.js"><link rel="prefetch" href="/assets/js/141.8bdc8521.js"><link rel="prefetch" href="/assets/js/142.a0a23f8d.js"><link rel="prefetch" href="/assets/js/143.f32ee764.js"><link rel="prefetch" href="/assets/js/144.2f573916.js"><link rel="prefetch" href="/assets/js/145.3a6b79fd.js"><link rel="prefetch" href="/assets/js/146.8ce3dcd6.js"><link rel="prefetch" href="/assets/js/147.5fe33517.js"><link rel="prefetch" href="/assets/js/148.8a03f1ec.js"><link rel="prefetch" href="/assets/js/149.a8687d3e.js"><link rel="prefetch" href="/assets/js/15.73496781.js"><link rel="prefetch" href="/assets/js/150.d79e3e7b.js"><link rel="prefetch" href="/assets/js/151.6e0f370d.js"><link rel="prefetch" href="/assets/js/152.76546147.js"><link rel="prefetch" href="/assets/js/153.d09340ca.js"><link rel="prefetch" href="/assets/js/154.51825e73.js"><link rel="prefetch" href="/assets/js/155.90e68970.js"><link rel="prefetch" href="/assets/js/156.129fdc68.js"><link rel="prefetch" href="/assets/js/157.b8f4b282.js"><link rel="prefetch" href="/assets/js/158.9152d24c.js"><link rel="prefetch" href="/assets/js/159.2b660299.js"><link rel="prefetch" href="/assets/js/16.d81d3835.js"><link rel="prefetch" href="/assets/js/160.adffbe88.js"><link rel="prefetch" href="/assets/js/161.8741b5e9.js"><link rel="prefetch" href="/assets/js/162.600433c1.js"><link rel="prefetch" href="/assets/js/163.4e10d3d3.js"><link rel="prefetch" href="/assets/js/164.4d77aba6.js"><link rel="prefetch" href="/assets/js/165.0ebb8880.js"><link rel="prefetch" href="/assets/js/166.57c8d20e.js"><link rel="prefetch" href="/assets/js/167.e6b6b24c.js"><link rel="prefetch" href="/assets/js/168.d1049f76.js"><link rel="prefetch" href="/assets/js/169.8dc37a47.js"><link rel="prefetch" href="/assets/js/17.c319bb1c.js"><link rel="prefetch" href="/assets/js/170.628ea13d.js"><link rel="prefetch" href="/assets/js/171.b63f5d75.js"><link rel="prefetch" href="/assets/js/172.fb253177.js"><link rel="prefetch" href="/assets/js/173.5c616fca.js"><link rel="prefetch" href="/assets/js/174.0788f38a.js"><link rel="prefetch" href="/assets/js/175.fa590b99.js"><link rel="prefetch" href="/assets/js/176.53126a68.js"><link rel="prefetch" href="/assets/js/177.9c200c94.js"><link rel="prefetch" href="/assets/js/178.6e36bf73.js"><link rel="prefetch" href="/assets/js/179.39060e46.js"><link rel="prefetch" href="/assets/js/18.63b9f6ac.js"><link rel="prefetch" href="/assets/js/180.c6cba237.js"><link rel="prefetch" href="/assets/js/181.f58eec21.js"><link rel="prefetch" href="/assets/js/182.1e5b39e3.js"><link rel="prefetch" href="/assets/js/183.bba375d6.js"><link rel="prefetch" href="/assets/js/184.a6d0e66a.js"><link rel="prefetch" href="/assets/js/185.ce6e0e0d.js"><link rel="prefetch" href="/assets/js/186.8d23b1ea.js"><link rel="prefetch" href="/assets/js/187.b5fd50ed.js"><link rel="prefetch" href="/assets/js/188.23ebbbd6.js"><link rel="prefetch" href="/assets/js/189.164ce979.js"><link rel="prefetch" href="/assets/js/19.8860ea76.js"><link rel="prefetch" href="/assets/js/190.6c1eeb7a.js"><link rel="prefetch" href="/assets/js/191.4c65abf1.js"><link rel="prefetch" href="/assets/js/192.31da951f.js"><link rel="prefetch" href="/assets/js/193.1478d525.js"><link rel="prefetch" href="/assets/js/194.0387cb9d.js"><link rel="prefetch" href="/assets/js/195.31214b16.js"><link rel="prefetch" href="/assets/js/196.95c54036.js"><link rel="prefetch" href="/assets/js/197.e15e8bef.js"><link rel="prefetch" href="/assets/js/198.9bd67daf.js"><link rel="prefetch" href="/assets/js/199.a48ac0d6.js"><link rel="prefetch" href="/assets/js/20.d7f319fd.js"><link rel="prefetch" href="/assets/js/200.95af2b61.js"><link rel="prefetch" href="/assets/js/201.82b79c2b.js"><link rel="prefetch" href="/assets/js/202.f97d740a.js"><link rel="prefetch" href="/assets/js/203.2e114994.js"><link rel="prefetch" href="/assets/js/204.c209d2c3.js"><link rel="prefetch" href="/assets/js/205.d279482f.js"><link rel="prefetch" href="/assets/js/21.a114b238.js"><link rel="prefetch" href="/assets/js/22.debabcf2.js"><link rel="prefetch" href="/assets/js/23.f9f703c4.js"><link rel="prefetch" href="/assets/js/24.f53d0a1d.js"><link rel="prefetch" href="/assets/js/26.9405b8bf.js"><link rel="prefetch" href="/assets/js/27.f17f7bef.js"><link rel="prefetch" href="/assets/js/28.a21ed34b.js"><link rel="prefetch" href="/assets/js/29.036d2291.js"><link rel="prefetch" href="/assets/js/30.54d690d2.js"><link rel="prefetch" href="/assets/js/31.04d07d3b.js"><link rel="prefetch" href="/assets/js/32.ed0a69b8.js"><link rel="prefetch" href="/assets/js/33.743db242.js"><link rel="prefetch" href="/assets/js/34.649644f0.js"><link rel="prefetch" href="/assets/js/35.4888260d.js"><link rel="prefetch" href="/assets/js/36.8057d558.js"><link rel="prefetch" href="/assets/js/37.d000a486.js"><link rel="prefetch" href="/assets/js/38.8722df4c.js"><link rel="prefetch" href="/assets/js/39.a09a2b2b.js"><link rel="prefetch" href="/assets/js/4.32c8b2cb.js"><link rel="prefetch" href="/assets/js/40.c02e006e.js"><link rel="prefetch" href="/assets/js/41.7ce78d1e.js"><link rel="prefetch" href="/assets/js/42.b17ba486.js"><link rel="prefetch" href="/assets/js/43.92e7a7be.js"><link rel="prefetch" href="/assets/js/44.30dc3eaf.js"><link rel="prefetch" href="/assets/js/45.ccf2fb63.js"><link rel="prefetch" href="/assets/js/46.a97fa4b2.js"><link rel="prefetch" href="/assets/js/47.1f422ddb.js"><link rel="prefetch" href="/assets/js/48.88c309a6.js"><link rel="prefetch" href="/assets/js/49.1e6aaa23.js"><link rel="prefetch" href="/assets/js/5.f05aa516.js"><link rel="prefetch" href="/assets/js/50.a489c804.js"><link rel="prefetch" href="/assets/js/51.74d694bd.js"><link rel="prefetch" href="/assets/js/52.44d0aa9b.js"><link rel="prefetch" href="/assets/js/53.df36d09a.js"><link rel="prefetch" href="/assets/js/54.5cb53d17.js"><link rel="prefetch" href="/assets/js/55.c2bd31a8.js"><link rel="prefetch" href="/assets/js/56.1249b372.js"><link rel="prefetch" href="/assets/js/57.f2ec0f90.js"><link rel="prefetch" href="/assets/js/58.074c05c7.js"><link rel="prefetch" href="/assets/js/59.19c72abe.js"><link rel="prefetch" href="/assets/js/6.20270f8a.js"><link rel="prefetch" href="/assets/js/60.e156625a.js"><link rel="prefetch" href="/assets/js/61.280adeb3.js"><link rel="prefetch" href="/assets/js/62.624bc2dc.js"><link rel="prefetch" href="/assets/js/63.284877e3.js"><link rel="prefetch" href="/assets/js/64.adcd5856.js"><link rel="prefetch" href="/assets/js/65.87dc63aa.js"><link rel="prefetch" href="/assets/js/66.8c218a0b.js"><link rel="prefetch" href="/assets/js/67.eb5f86e3.js"><link rel="prefetch" href="/assets/js/68.501e088d.js"><link rel="prefetch" href="/assets/js/69.4f0176f4.js"><link rel="prefetch" href="/assets/js/7.a89dfe0c.js"><link rel="prefetch" href="/assets/js/70.2c4626de.js"><link rel="prefetch" href="/assets/js/71.072bd415.js"><link rel="prefetch" href="/assets/js/72.874aa616.js"><link rel="prefetch" href="/assets/js/73.f583310b.js"><link rel="prefetch" href="/assets/js/74.dd22ff96.js"><link rel="prefetch" href="/assets/js/75.fd4f7ae6.js"><link rel="prefetch" href="/assets/js/76.147b9621.js"><link rel="prefetch" href="/assets/js/77.a1c7bdcc.js"><link rel="prefetch" href="/assets/js/78.02dbd939.js"><link rel="prefetch" href="/assets/js/79.8c68e2d0.js"><link rel="prefetch" href="/assets/js/8.f9344460.js"><link rel="prefetch" href="/assets/js/80.86d29d86.js"><link rel="prefetch" href="/assets/js/81.b7d267b5.js"><link rel="prefetch" href="/assets/js/82.a2d9c7ec.js"><link rel="prefetch" href="/assets/js/83.65df14d2.js"><link rel="prefetch" href="/assets/js/84.124a9407.js"><link rel="prefetch" href="/assets/js/85.168f0a2b.js"><link rel="prefetch" href="/assets/js/86.39972cda.js"><link rel="prefetch" href="/assets/js/87.041e2f7f.js"><link rel="prefetch" href="/assets/js/88.ea4ed64b.js"><link rel="prefetch" href="/assets/js/89.d9114252.js"><link rel="prefetch" href="/assets/js/9.abb82ff1.js"><link rel="prefetch" href="/assets/js/90.8e41a134.js"><link rel="prefetch" href="/assets/js/91.6a0c20f5.js"><link rel="prefetch" href="/assets/js/92.4e763190.js"><link rel="prefetch" href="/assets/js/93.af0f570b.js"><link rel="prefetch" href="/assets/js/94.bba22364.js"><link rel="prefetch" href="/assets/js/95.f1b99360.js"><link rel="prefetch" href="/assets/js/96.c58a6c52.js"><link rel="prefetch" href="/assets/js/97.e3c244ce.js"><link rel="prefetch" href="/assets/js/98.8c746e94.js"><link rel="prefetch" href="/assets/js/99.bc09aeb4.js"><link rel="prefetch" href="/assets/js/vendors~reveal.cd42adf8.js">
+    <link rel="stylesheet" href="/assets/css/0.styles.af8b0614.css">
+  </head>
+  <body>
+    <div id="app" data-server-rendered="true"><div class="theme-container"><header class="navbar"><div class="sidebar-button"><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img" viewBox="0 0 448 512" class="icon"><path fill="currentColor" d="M436 124H12c-6.627 0-12-5.373-12-12V80c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12z"></path></svg></div> <a href="/" class="home-link router-link-active"><img src="/image/docmoa-144.png" alt="docmoa" class="logo"> <span class="site-name can-hide">docmoa</span></a> <div class="links"><div class="search-box"><input aria-label="Search" autocomplete="off" spellcheck="false" value=""> <!----></div> <nav class="nav-links can-hide"><div class="nav-item"><a href="/00-Howto/" class="nav-link">
+  How To
+</a></div><div class="nav-item"><div class="dropdown-wrapper"><button type="button" aria-label="Infra" class="dropdown-title"><span class="title">Infra</span> <span class="arrow down"></span></button> <button type="button" aria-label="Infra" class="mobile-dropdown-title"><span class="title">Infra</span> <span class="arrow right"></span></button> <ul class="nav-dropdown" style="display:none;"><li class="dropdown-item"><!----> <a href="/01-Infrastructure/" class="nav-link">
+  Infrastructure
+</a></li><li class="dropdown-item"><!----> <a href="/02-Private Platform/" class="nav-link">
+  Private-Platform
+</a></li><li class="dropdown-item"><!----> <a href="/03-Public Cloud/" class="nav-link">
+  Public-Cloud
+</a></li></ul></div></div><div class="nav-item"><a href="/05-Software/" class="nav-link">
+  Software
+</a></div><div class="nav-item"><a href="/04-HashiCorp/" class="nav-link router-link-active">
+  HashiCorp
+</a></div><div class="nav-item"><a href="/06-etc/" class="nav-link">
+  Etc.
+</a></div><div class="nav-item"><div class="dropdown-wrapper"><button type="button" aria-label="MORE" class="dropdown-title"><span class="title">MORE</span> <span class="arrow down"></span></button> <button type="button" aria-label="MORE" class="mobile-dropdown-title"><span class="title">MORE</span> <span class="arrow right"></span></button> <ul class="nav-dropdown" style="display:none;"><li class="dropdown-item"><!----> <a href="/99-about/01-About.html" class="nav-link">
+  About
+</a></li><li class="dropdown-item"><!----> <a href="/99-about/02-Thanks.html" class="nav-link">
+  Thank you
+</a></li><li class="dropdown-item"><!----> <a href="https://github.com/docmoa/docs" target="_blank" rel="noopener noreferrer" class="nav-link external">
+  Go Contribute
+  <span><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg> <span class="sr-only">(opens new window)</span></span></a></li></ul></div></div><div class="nav-item"><a href="/98-Tags.html" class="nav-link">
+  #Tags
+</a></div> <!----></nav></div></header> <div class="sidebar-mask"></div> <aside class="sidebar"><nav class="nav-links"><div class="nav-item"><a href="/00-Howto/" class="nav-link">
+  How To
+</a></div><div class="nav-item"><div class="dropdown-wrapper"><button type="button" aria-label="Infra" class="dropdown-title"><span class="title">Infra</span> <span class="arrow down"></span></button> <button type="button" aria-label="Infra" class="mobile-dropdown-title"><span class="title">Infra</span> <span class="arrow right"></span></button> <ul class="nav-dropdown" style="display:none;"><li class="dropdown-item"><!----> <a href="/01-Infrastructure/" class="nav-link">
+  Infrastructure
+</a></li><li class="dropdown-item"><!----> <a href="/02-Private Platform/" class="nav-link">
+  Private-Platform
+</a></li><li class="dropdown-item"><!----> <a href="/03-Public Cloud/" class="nav-link">
+  Public-Cloud
+</a></li></ul></div></div><div class="nav-item"><a href="/05-Software/" class="nav-link">
+  Software
+</a></div><div class="nav-item"><a href="/04-HashiCorp/" class="nav-link router-link-active">
+  HashiCorp
+</a></div><div class="nav-item"><a href="/06-etc/" class="nav-link">
+  Etc.
+</a></div><div class="nav-item"><div class="dropdown-wrapper"><button type="button" aria-label="MORE" class="dropdown-title"><span class="title">MORE</span> <span class="arrow down"></span></button> <button type="button" aria-label="MORE" class="mobile-dropdown-title"><span class="title">MORE</span> <span class="arrow right"></span></button> <ul class="nav-dropdown" style="display:none;"><li class="dropdown-item"><!----> <a href="/99-about/01-About.html" class="nav-link">
+  About
+</a></li><li class="dropdown-item"><!----> <a href="/99-about/02-Thanks.html" class="nav-link">
+  Thank you
+</a></li><li class="dropdown-item"><!----> <a href="https://github.com/docmoa/docs" target="_blank" rel="noopener noreferrer" class="nav-link external">
+  Go Contribute
+  <span><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg> <span class="sr-only">(opens new window)</span></span></a></li></ul></div></div><div class="nav-item"><a href="/98-Tags.html" class="nav-link">
+  #Tags
+</a></div> <!----></nav>  <ul class="sidebar-links"><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>Howto</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>Infrastructure</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>Private Platform</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>Public Cloud</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading open"><span>Hashicorp</span> <span class="arrow down"></span></p> <ul class="sidebar-links sidebar-group-items"><li><a href="/04-HashiCorp/" aria-current="page" class="sidebar-link">Overview</a></li><li><section class="sidebar-group collapsable is-sub-group depth-1"><p class="sidebar-heading"><span>Updates</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable is-sub-group depth-1"><p class="sidebar-heading"><span>Nomad</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable is-sub-group depth-1"><p class="sidebar-heading"><span>Vault</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable is-sub-group depth-1"><p class="sidebar-heading"><span>Boundary</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable is-sub-group depth-1"><p class="sidebar-heading open"><span>Consul</span> <span class="arrow down"></span></p> <ul class="sidebar-links sidebar-group-items"><li><section class="sidebar-group collapsable is-sub-group depth-2"><p class="sidebar-heading"><span>Information</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable is-sub-group depth-2"><p class="sidebar-heading"><span>Configuration</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable is-sub-group depth-2"><p class="sidebar-heading"><span>Usecase</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable is-sub-group depth-2"><p class="sidebar-heading"><span>Troubleshooting</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable is-sub-group depth-2"><p class="sidebar-heading"><span>Template Sample</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable is-sub-group depth-2"><p class="sidebar-heading open"><span>On Kubernetes</span> <span class="arrow down"></span></p> <ul class="sidebar-links sidebar-group-items"><li><section class="sidebar-group collapsable is-sub-group depth-3"><p class="sidebar-heading open"><span>Servicemesh101</span> <span class="arrow down"></span></p> <ul class="sidebar-links sidebar-group-items"><li><a href="/04-HashiCorp/04-Consul/06-on_Kubernetes/ServiceMesh101/01-Install.html" class="sidebar-link">01. Install</a></li><li><a href="/04-HashiCorp/04-Consul/06-on_Kubernetes/ServiceMesh101/02-SideCar.html" aria-current="page" class="active sidebar-link">02. SideCar</a></li><li><a href="/04-HashiCorp/04-Consul/06-on_Kubernetes/ServiceMesh101/03-use-crd.html" class="sidebar-link">03. CRD로 Consul Serive Mesh 관리</a></li><li><a href="/04-HashiCorp/04-Consul/06-on_Kubernetes/ServiceMesh101/04-traffic-management.html" class="sidebar-link">04. 트래픽 관리</a></li></ul></section></li><li><section class="sidebar-group collapsable is-sub-group depth-3"><p class="sidebar-heading"><span>Annotation</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable is-sub-group depth-3"><p class="sidebar-heading"><span>Configuration</span> <span class="arrow right"></span></p> <!----></section></li></ul></section></li></ul></section></li><li><section class="sidebar-group collapsable is-sub-group depth-1"><p class="sidebar-heading"><span>Terraform</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable is-sub-group depth-1"><p class="sidebar-heading"><span>Vagrant</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable is-sub-group depth-1"><p class="sidebar-heading"><span>Packer</span> <span class="arrow right"></span></p> <!----></section></li></ul></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>Software</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>Etc</span> <span class="arrow right"></span></p> <!----></section></li><li><a href="/98-Tags.html" class="sidebar-link">Tags</a></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>About</span> <span class="arrow right"></span></p> <!----></section></li></ul> </aside> <main class="page"> <div class="theme-default-content content__default"><h1 id="_02-sidecar"><a href="#_02-sidecar" class="header-anchor">#</a> 02. SideCar</h1> <div class="custom-block tip"><p class="custom-block-title">TIP</p> <p>실습을 위한 조건은 다음과 같습니다.</p> <ul><li>Consul 이 구성된 Kubernetes 환경</li> <li>설치 구성 시 <code>connectInject</code> 이 활성화 되어있어야 합니다.</li></ul></div> <blockquote><p>참고 : <a href="https://learn.hashicorp.com/tutorials/consul/service-mesh-application-secure-networking?in=consul/kubernetes" target="_blank" rel="noopener noreferrer">https://learn.hashicorp.com/tutorials/consul/service-mesh-application-secure-networking?in=consul/kubernetes<span><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg> <span class="sr-only">(opens new window)</span></span></a></p></blockquote> <p>Consul 서비스 메시를 사용하면 애플리케이션을 제로 트러스트 네트워크에 배포할 수 있습니다. 제로 트러스트 네트워크는 아무 것도 자동으로 신뢰되지 않는 네트워크입니다. 모든 연결은 인증과 승인을 모두 받아야 합니다. 이 패러다임은 동일한 네트워크에서 다수의 서비스가 실행될 수 있는 마이크로서비스 및 멀티 클라우드 환경에서 중요합니다. Consul 서비스 메시를 사용하면 mTLS를 사용하여 서비스 ID를 인증하고 의도를 사용하여 서비스 작업을 승인하거나 차단할 수 있습니다.</p> <p>이 튜토리얼에서는 두 개의 서비스 <code>web</code>및 <code>api</code>를 Kubernetes 클러스터에서 실행되는 Consul의 서비스 메시에 배포합니다. 두 서비스는 Consul을 사용하여 서로를 검색하고 사이드카 프록시를 사용하여 mTLS를 통해 통신합니다. 두 서비스는 웹UI와 백엔드 서비스로 구성된 간단한 2-tier 애플리케이션으로 HTTP를 통해 서비스와 통신합니다.</p> <p><img src="https://learn.hashicorp.com/img/consul/web-api-proxy.png" alt="" loading="lazy"></p> <h2 id="sidecar-proxy"><a href="#sidecar-proxy" class="header-anchor">#</a> Sidecar Proxy</h2> <p>Sidecar Proxy는 애플리케이션 컨테이너와 함께 동일 Pod상에 배포됨으로 localhost 로 통신할 수 있습니다. 사용자가 다른서비스에 대한 요청을 Sidecar Proxy에 지정하면 해당 요청을 맵핑된 다른 서비스로 전달합니다. 이 방식은 기존 개발자가 로컬에서 개발하는 환경과 동일하게 동작합니다. UI웹을 로컬 9090포트로 실행하고 백엔드 앱을 8080 포트로 실행한경우 UI웹은 백엔드 앱을 <code>localhost:8080</code> 으로 호출합니다. Consul Sidecar Proxy는 localhost 로 요청되는 포트를 지정한 <code>Upstream</code> 서비스로 전달하는 규칙을 처리하며, 여기에는 mTLS가 자동으로 구성됩니다.</p> <h2 id="intention-규칙-추가"><a href="#intention-규칙-추가" class="header-anchor">#</a> Intention 규칙 추가</h2> <p>Sidecar Proxy의 서비스 접근 제어를 위해 모든 서비스에 대한 Deny 구성을 수행합니다. UI의 좌측 메뉴의 <code>Intention</code>을 클릭하고 우측의 <code>Create</code> 버튼을 클릭하여 모든 서비스 (엔터프라이즈의 경우 모든 Namespace 포함) 간에 Deny 규칙을 생성합니다.</p> <p><img src="/assets/img/02-sidecar-intention-alldeny.3cf0e11f.png" alt="" loading="lazy"></p> <h2 id="service-구성"><a href="#service-구성" class="header-anchor">#</a> Service 구성</h2> <p>테스트 구성을 저장하기 위한 디렉토리를 생성합니다.</p> <div class="language-bash line-numbers-mode"><pre class="language-bash"><code><span class="token function">mkdir</span> ./k8s_config
+</code></pre> <div class="line-numbers-wrapper"><span class="line-number">1</span><br></div></div><h3 id="백엔드-서비스"><a href="#백엔드-서비스" class="header-anchor">#</a> 백엔드 서비스</h3> <div class="language-bash line-numbers-mode"><pre class="language-bash"><code><span class="token function">cat</span> <span class="token operator">&gt;</span> ./k8s_config/api.yaml <span class="token operator">&lt;&lt;</span><span class="token string">EOF
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: api-v1
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: api-v1
+spec:
+  selector:
+    app: api-v1
+  ports:
+    - port: 9091
+      targetPort: 9091
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api-v1
+  labels:
+    app: api-v1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: api-v1
+  template:
+    metadata:
+      labels:
+        app: api-v1
+      annotations:
+        consul.hashicorp.com/connect-inject: 'true'
+    spec:
+      serviceAccountName: api-v1
+      containers:
+        - name: api
+          image: nicholasjackson/fake-service:v0.7.8
+          ports:
+            - containerPort: 9091
+          env:
+            - name: 'LISTEN_ADDR'
+              value: '127.0.0.1:9091'
+            - name: 'NAME'
+              value: 'api-v1'
+            - name: 'MESSAGE'
+              value: 'Response from API v1'
+EOF</span>
+</code></pre> <div class="line-numbers-wrapper"><span class="line-number">1</span><br><span class="line-number">2</span><br><span class="line-number">3</span><br><span class="line-number">4</span><br><span class="line-number">5</span><br><span class="line-number">6</span><br><span class="line-number">7</span><br><span class="line-number">8</span><br><span class="line-number">9</span><br><span class="line-number">10</span><br><span class="line-number">11</span><br><span class="line-number">12</span><br><span class="line-number">13</span><br><span class="line-number">14</span><br><span class="line-number">15</span><br><span class="line-number">16</span><br><span class="line-number">17</span><br><span class="line-number">18</span><br><span class="line-number">19</span><br><span class="line-number">20</span><br><span class="line-number">21</span><br><span class="line-number">22</span><br><span class="line-number">23</span><br><span class="line-number">24</span><br><span class="line-number">25</span><br><span class="line-number">26</span><br><span class="line-number">27</span><br><span class="line-number">28</span><br><span class="line-number">29</span><br><span class="line-number">30</span><br><span class="line-number">31</span><br><span class="line-number">32</span><br><span class="line-number">33</span><br><span class="line-number">34</span><br><span class="line-number">35</span><br><span class="line-number">36</span><br><span class="line-number">37</span><br><span class="line-number">38</span><br><span class="line-number">39</span><br><span class="line-number">40</span><br><span class="line-number">41</span><br><span class="line-number">42</span><br><span class="line-number">43</span><br><span class="line-number">44</span><br><span class="line-number">45</span><br><span class="line-number">46</span><br><span class="line-number">47</span><br><span class="line-number">48</span><br><span class="line-number">49</span><br></div></div><h3 id="프론트엔드-서비스"><a href="#프론트엔드-서비스" class="header-anchor">#</a> 프론트엔드 서비스</h3> <div class="language-bash line-numbers-mode"><pre class="language-bash"><code><span class="token function">cat</span> <span class="token operator">&gt;</span> ./k8s_config/web.yaml <span class="token operator">&lt;&lt;</span><span class="token string">EOF
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: web
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: web
+spec:
+  selector:
+    app: web
+  ports:
+    - port: 9090
+      targetPort: 9090
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web-deployment
+  labels:
+    app: web
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: web
+  template:
+    metadata:
+      labels:
+        app: web
+      annotations:
+        consul.hashicorp.com/connect-inject: 'true'
+        consul.hashicorp.com/connect-service-upstreams: 'api-v1:9091'
+    spec:
+      serviceAccountName: web
+      containers:
+        - name: web
+          image: nicholasjackson/fake-service:v0.7.8
+          ports:
+            - containerPort: 9090
+          env:
+            - name: 'LISTEN_ADDR'
+              value: '0.0.0.0:9090'
+            - name: 'UPSTREAM_URIS'
+              value: 'http://localhost:9091'
+            - name: 'NAME'
+              value: 'web'
+            - name: 'MESSAGE'
+              value: 'Hello World'
+EOF</span>
+</code></pre> <div class="line-numbers-wrapper"><span class="line-number">1</span><br><span class="line-number">2</span><br><span class="line-number">3</span><br><span class="line-number">4</span><br><span class="line-number">5</span><br><span class="line-number">6</span><br><span class="line-number">7</span><br><span class="line-number">8</span><br><span class="line-number">9</span><br><span class="line-number">10</span><br><span class="line-number">11</span><br><span class="line-number">12</span><br><span class="line-number">13</span><br><span class="line-number">14</span><br><span class="line-number">15</span><br><span class="line-number">16</span><br><span class="line-number">17</span><br><span class="line-number">18</span><br><span class="line-number">19</span><br><span class="line-number">20</span><br><span class="line-number">21</span><br><span class="line-number">22</span><br><span class="line-number">23</span><br><span class="line-number">24</span><br><span class="line-number">25</span><br><span class="line-number">26</span><br><span class="line-number">27</span><br><span class="line-number">28</span><br><span class="line-number">29</span><br><span class="line-number">30</span><br><span class="line-number">31</span><br><span class="line-number">32</span><br><span class="line-number">33</span><br><span class="line-number">34</span><br><span class="line-number">35</span><br><span class="line-number">36</span><br><span class="line-number">37</span><br><span class="line-number">38</span><br><span class="line-number">39</span><br><span class="line-number">40</span><br><span class="line-number">41</span><br><span class="line-number">42</span><br><span class="line-number">43</span><br><span class="line-number">44</span><br><span class="line-number">45</span><br><span class="line-number">46</span><br><span class="line-number">47</span><br><span class="line-number">48</span><br><span class="line-number">49</span><br><span class="line-number">50</span><br><span class="line-number">51</span><br><span class="line-number">52</span><br></div></div><p>프론트엔드 서비스에 <code>Deployment</code> 구성 내용의 <code>annotation</code> 을 확인하세요. 이 형식은 9091로 요청된 localhost로의 요청을 sidecar가 <code>api-v1</code>서비스로 전달하는 것을 의미합니다.</p> <ul><li><code>consul.hashicorp.com/connect-service-upstreams: 'api-v1:9091'</code></li></ul> <h2 id="서비스-배포-및-등록-확인"><a href="#서비스-배포-및-등록-확인" class="header-anchor">#</a> 서비스 배포 및 등록 확인</h2> <p><code>kubectl apply</code> 명령을 통해 배포를 확인하고 Consul UI에서 확인합니다.</p> <div class="language-bash line-numbers-mode"><pre class="language-bash"><code>kubectl apply -f ./k8s_config/api.yaml
+</code></pre> <div class="line-numbers-wrapper"><span class="line-number">1</span><br></div></div><div class="language-bash line-numbers-mode"><pre class="language-bash"><code><span class="token comment"># 출력</span>
+serviceaccount/api-v1 created
+service/api-v1 created
+deployment.apps/api-v1 created
+</code></pre> <div class="line-numbers-wrapper"><span class="line-number">1</span><br><span class="line-number">2</span><br><span class="line-number">3</span><br><span class="line-number">4</span><br></div></div><div class="language-bash line-numbers-mode"><pre class="language-bash"><code>kubectl apply -f ./k8s_config/web.yaml
+</code></pre> <div class="line-numbers-wrapper"><span class="line-number">1</span><br></div></div><div class="language-bash line-numbers-mode"><pre class="language-bash"><code><span class="token comment"># 출력</span>
+serviceaccount/web created
+service/web created
+deployment.apps/web-deployment created
+</code></pre> <div class="line-numbers-wrapper"><span class="line-number">1</span><br><span class="line-number">2</span><br><span class="line-number">3</span><br><span class="line-number">4</span><br></div></div><p>UI에 접속하고 좌측 Namespace에서 사용중인 Namespace를 확인합니다. 서비스 목록에 <code>api-v1</code>, <code>web</code> 이 등록되고 상태가 정상임을 확인합니다.</p> <p><img src="/assets/img/02-sidecar-services.4c0f71a3.png" alt="Services - Consul 2022-02-19 19-21-21" loading="lazy"></p> <p><code>port-forward</code>를 통해 로컬에서 web 앱을 확인합니다.</p> <div class="language-bash line-numbers-mode"><pre class="language-bash"><code>kubectl port-forward service/web <span class="token number">9090</span>:9090 --address <span class="token number">0.0</span>.0.0
+</code></pre> <div class="line-numbers-wrapper"><span class="line-number">1</span><br></div></div><div class="language-bash line-numbers-mode"><pre class="language-bash"><code><span class="token comment"># 출력</span>
+Forwarding from <span class="token number">0.0</span>.0.0:9090 -<span class="token operator">&gt;</span> <span class="token number">9090</span>
+</code></pre> <div class="line-numbers-wrapper"><span class="line-number">1</span><br><span class="line-number">2</span><br></div></div><p>http://localhost:9090/ui 에 브라우저로 접속하여 상태를 확인합니다.</p> <p><img src="/assets/img/02-sidecar-error.55ad97c3.png" alt="image-20220219192259588" loading="lazy"></p> <p>500 에러가 발생하였습니다. Consul Service Mesh는 서비스간 의도적으로 접속 가능여부를 동적으로 통제합니다. 이 기능을 <code>Intention</code> 이라고 부릅니다.    Consul UI에 접속하여 <code>web</code> 서비스 이름을 클릭하면 다음과 같이 요청이 거부되어 있는것을 확인할 수 있습니다.</p> <p>Intention 수정을 위해서는 권한이 필요합니다. 현재 환경에서는 전달받은 token (3108cbb3-005c-a3e4-9a42-6f13d1f5e4e6) 을 우측 상단 로그인에서 입력합니다.</p> <p><img src="/assets/img/02-sidecar-topology-blocked.39f7bfad.png" alt="web - Consul 2022-02-19 19-24-22" loading="lazy"></p> <p><code>x</code> 표시를 클릭하여 <code>Create</code> 버튼을 클릭하여 Intention 규칙을 생성합니다. 이후에 연결이 허용된것을 확인할 수 있습니다.</p> <p><img src="/assets/img/02-sidecar-topology-allow.3e75d538.png" alt="web - Consul 2022-02-19 19-26-03" loading="lazy"></p> <p>다시 http://localhost:9090/ui 에 브라우저로 접속하여 상태를 확인합니다.</p> <p><img src="/assets/img/02-sidecar-200.3455c263.png" alt="image-20220219192915371" loading="lazy"></p> <p>다음 과정을 진행하기 위해 기존 적용된 구성을 삭제합니다.</p> <div class="language-bash line-numbers-mode"><pre class="language-bash"><code>kubectl delete -f ./k8s_config
+</code></pre> <div class="line-numbers-wrapper"><span class="line-number">1</span><br></div></div><div class="language-bash line-numbers-mode"><pre class="language-bash"><code><span class="token comment"># 출력</span>
+serviceaccount <span class="token string">&quot;api-v1&quot;</span> deleted
+<span class="token function">service</span> <span class="token string">&quot;api-v1&quot;</span> deleted
+deployment.apps <span class="token string">&quot;api-v1&quot;</span> deleted
+serviceaccount <span class="token string">&quot;web&quot;</span> deleted
+<span class="token function">service</span> <span class="token string">&quot;web&quot;</span> deleted
+deployment.apps <span class="token string">&quot;web-deployment&quot;</span> deleted
+</code></pre> <div class="line-numbers-wrapper"><span class="line-number">1</span><br><span class="line-number">2</span><br><span class="line-number">3</span><br><span class="line-number">4</span><br><span class="line-number">5</span><br><span class="line-number">6</span><br><span class="line-number">7</span><br></div></div><h2 id="with-namespace-ent"><a href="#with-namespace-ent" class="header-anchor">#</a> With Namespace (Ent)</h2> <p>백엔드 서비스를 다른 Namespace에 배포하고, 프론트엔드가 해당 백엔드에 접근할 수 있도록 수정합니다.</p> <h3 id="프론트엔드-서비스-2"><a href="#프론트엔드-서비스-2" class="header-anchor">#</a> 프론트엔드 서비스</h3> <div class="language-bash line-numbers-mode"><pre class="language-bash"><code><span class="token function">cat</span> <span class="token operator">&gt;</span> ./k8s_config/web.yaml <span class="token operator">&lt;&lt;</span><span class="token string">EOF
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: web
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: web
+spec:
+  selector:
+    app: web
+  ports:
+    - port: 9090
+      targetPort: 9090
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web-deployment
+  labels:
+    app: web
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: web
+  template:
+    metadata:
+      labels:
+        app: web
+      annotations:
+        consul.hashicorp.com/connect-inject: 'true'
+        consul.hashicorp.com/connect-service-upstreams: 'api-v1.&lt;namespace&gt;:9091'
+    spec:
+      serviceAccountName: web
+      containers:
+        - name: web
+          image: nicholasjackson/fake-service:v0.7.8
+          ports:
+            - containerPort: 9090
+          env:
+            - name: 'LISTEN_ADDR'
+              value: '0.0.0.0:9090'
+            - name: 'UPSTREAM_URIS'
+              value: 'http://localhost:9091'
+            - name: 'NAME'
+              value: 'web'
+            - name: 'MESSAGE'
+              value: 'Hello World'
+EOF</span>
+</code></pre> <div class="line-numbers-wrapper"><span class="line-number">1</span><br><span class="line-number">2</span><br><span class="line-number">3</span><br><span class="line-number">4</span><br><span class="line-number">5</span><br><span class="line-number">6</span><br><span class="line-number">7</span><br><span class="line-number">8</span><br><span class="line-number">9</span><br><span class="line-number">10</span><br><span class="line-number">11</span><br><span class="line-number">12</span><br><span class="line-number">13</span><br><span class="line-number">14</span><br><span class="line-number">15</span><br><span class="line-number">16</span><br><span class="line-number">17</span><br><span class="line-number">18</span><br><span class="line-number">19</span><br><span class="line-number">20</span><br><span class="line-number">21</span><br><span class="line-number">22</span><br><span class="line-number">23</span><br><span class="line-number">24</span><br><span class="line-number">25</span><br><span class="line-number">26</span><br><span class="line-number">27</span><br><span class="line-number">28</span><br><span class="line-number">29</span><br><span class="line-number">30</span><br><span class="line-number">31</span><br><span class="line-number">32</span><br><span class="line-number">33</span><br><span class="line-number">34</span><br><span class="line-number">35</span><br><span class="line-number">36</span><br><span class="line-number">37</span><br><span class="line-number">38</span><br><span class="line-number">39</span><br><span class="line-number">40</span><br><span class="line-number">41</span><br><span class="line-number">42</span><br><span class="line-number">43</span><br><span class="line-number">44</span><br><span class="line-number">45</span><br><span class="line-number">46</span><br><span class="line-number">47</span><br><span class="line-number">48</span><br><span class="line-number">49</span><br><span class="line-number">50</span><br><span class="line-number">51</span><br><span class="line-number">52</span><br></div></div><p>프론트엔드 서비스에 <code>Deployment</code> 구성 내용의 <code>annotation</code> 을 확인하세요. 이 형식은 9091로 요청된 localhost로의 요청을 sidecar가 <code>&lt;namespace&gt;</code> Namespace의 <code>api-v1</code>서비스로 전달하는 것을 의미합니다.</p> <ul><li><code>consul.hashicorp.com/connect-service-upstreams: 'api-v1.&lt;namespace&gt;:9091'</code></li></ul> <p>또한 Namespace 간 Intention을 작성하여 적용해야합니다.</p> <h2 id="정리"><a href="#정리" class="header-anchor">#</a> 정리</h2> <ul><li>이 단계에서는 두개의 앱을 이용하여 Service Mesh를 구성하기위한 Sidecar Proxy를 통해 통신하는 방식을 확인하였습니다.</li> <li>Sidecar Proxy에는 Consul이 정책을 주입할 수 있으므로, 기존 Firewall 방식이 아닌 서비스간 의도적인 연결의 정의를 통해 허용/비허용 됨을 확인하였습니다.</li></ul> <div class="custom-block tip"><p class="custom-block-title">참고 - Intention 순위</p> <p>범위가 좁을수록 우선순위가 높습니다.</p> <table><thead><tr><th>Source Namespace</th> <th>Source Name</th> <th>Destination Namespace</th> <th>Destination Name</th> <th>높을수록 서열 높음</th></tr></thead> <tbody><tr><td>Exact</td> <td>Exact</td> <td>Exact</td> <td>Exact</td> <td>9</td></tr> <tr><td>Exact</td> <td><code>*</code></td> <td>Exact</td> <td>Exact</td> <td>8</td></tr> <tr><td><code>*</code></td> <td><code>*</code></td> <td>Exact</td> <td>Exact</td> <td>7</td></tr> <tr><td>Exact</td> <td>Exact</td> <td>Exact</td> <td><code>*</code></td> <td>6</td></tr> <tr><td>Exact</td> <td><code>*</code></td> <td>Exact</td> <td><code>*</code></td> <td>5</td></tr> <tr><td><code>*</code></td> <td><code>*</code></td> <td>Exact</td> <td><code>*</code></td> <td>4</td></tr> <tr><td>Exact</td> <td>Exact</td> <td><code>*</code></td> <td><code>*</code></td> <td>3</td></tr> <tr><td>Exact</td> <td><code>*</code></td> <td><code>*</code></td> <td><code>*</code></td> <td>2</td></tr> <tr><td><code>*</code></td> <td><code>*</code></td> <td><code>*</code></td> <td><code>*</code></td> <td>1</td></tr></tbody></table></div></div> <footer class="page-edit"><!----> <div class="last-updated"><span class="prefix">Last Updated:</span> <span class="time">2/27/2022, 1:41:09 PM</span></div></footer> <div class="page-nav"><p class="inner"><span class="prev">
+      ←
+      <a href="/04-HashiCorp/04-Consul/06-on_Kubernetes/ServiceMesh101/01-Install.html" class="prev">
+        01. Install
+      </a></span> <span class="next"><a href="/04-HashiCorp/04-Consul/06-on_Kubernetes/ServiceMesh101/03-use-crd.html">
+        03. CRD로 Consul Serive Mesh 관리
+      </a>
+      →
+    </span></p></div> </main></div><div class="global-ui"><!----><!----></div></div>
+    <script src="/assets/js/app.b6bccdf7.js" defer></script><script src="/assets/js/3.e2e6689d.js" defer></script><script src="/assets/js/13.e571a1b3.js" defer></script><script src="/assets/js/25.1d118ed6.js" defer></script>
+  </body>
+</html>
