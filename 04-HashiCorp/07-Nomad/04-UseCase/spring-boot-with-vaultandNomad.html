@@ -1,0 +1,298 @@
+<!doctype html>
+<html lang="ko-KR" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="generator" content="VuePress 2.0.0-rc.14" />
+    <meta name="theme" content="VuePress Theme Hope 2.0.0-rc.50" />
+    <style>
+      html {
+        background: var(--bg-color, #fff);
+      }
+
+      html[data-theme="dark"] {
+        background: var(--bg-color, #1d1e1f);
+      }
+
+      body {
+        background: var(--bg-color);
+      }
+    </style>
+    <script>
+      const userMode = localStorage.getItem("vuepress-theme-hope-scheme");
+      const systemDarkMode =
+        window.matchMedia &&
+        window.matchMedia("(prefers-color-scheme: dark)").matches;
+
+      if (userMode === "dark" || (userMode !== "light" && systemDarkMode)) {
+        document.documentElement.setAttribute("data-theme", "dark");
+      }
+    </script>
+    <meta name="Spring Boot with Vault and Nomad" content="Spring Boot에 구성관리로 Vault로 Application 배포와 인증, 인가는 Nomad"><meta property="og:url" content="https://docmoa.github.io/04-HashiCorp/07-Nomad/04-UseCase/spring-boot-with-vaultandNomad.html"><meta property="og:site_name" content="docmoa"><meta property="og:title" content="Vault로 Spring Boot 구성관리 Nomad Version"><meta property="og:description" content="Vault로 Spring Boot 구성관리 Nomad Version token, app-role로 관리: docmoa aws-auth로 관리: docmoa Spring Boot에서는 Token, AppRole 외에도 AWS Auth를 통해 시크릿을 주입할 수 있습니다. AWS Auth 방식은 AWS IAM과 EC2 ..."><meta property="og:type" content="article"><meta property="og:locale" content="ko-KR"><meta property="og:updated_time" content="2024-09-09T07:35:10.000Z"><meta property="article:author" content="unghee"><meta property="article:tag" content="vault"><meta property="article:tag" content="java"><meta property="article:tag" content="spring"><meta property="article:tag" content="nomad"><meta property="article:modified_time" content="2024-09-09T07:35:10.000Z"><script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Vault로 Spring Boot 구성관리 Nomad Version","image":[""],"dateModified":"2024-09-09T07:35:10.000Z","author":[{"@type":"Person","name":"unghee"}]}</script><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap"><link rel="icon" href="/logo.png"><link rel="manifest" href="/manifest.webmanifest" crossorigin="use-credentials"><meta name="theme-color" content="#46bd87"><link rel="apple-touch-icon" href="/assets/icon/apple-icon-152.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="msapplication-TileImage" content="/assets/icon/ms-icon-144.png"><meta name="msapplication-TileColor" content="#ffffff"><link rel="alternate" type="application/rss+xml" href="https://docmoa.github.io/rss.xml" title="docmoa RSS Feed"><title>Vault로 Spring Boot 구성관리 Nomad Version | docmoa</title><meta name="description" content="Vault로 Spring Boot 구성관리 Nomad Version token, app-role로 관리: docmoa aws-auth로 관리: docmoa Spring Boot에서는 Token, AppRole 외에도 AWS Auth를 통해 시크릿을 주입할 수 있습니다. AWS Auth 방식은 AWS IAM과 EC2 ...">
+    <link rel="preload" href="/assets/style-CkODk6eP.css" as="style"><link rel="stylesheet" href="/assets/style-CkODk6eP.css">
+    <link rel="modulepreload" href="/assets/app-BWMI_1Y2.js"><link rel="modulepreload" href="/assets/spring-boot-with-vaultandNomad.html-DSFQPHnt.js"><link rel="modulepreload" href="/assets/plugin-vue_export-helper-DlAUqK2U.js">
+    
+  </head>
+  <body>
+    <div id="app"><!--[--><!--[--><!--[--><span tabindex="-1"></span><a href="#main-content" class="vp-skip-link sr-only">본문으로 건너뛰기</a><!--]--><!--[--><div class="theme-container external-link-icon has-toc"><!--[--><header id="navbar" class="vp-navbar"><div class="vp-navbar-start"><button type="button" class="vp-toggle-sidebar-button" title="Toggle Sidebar"><span class="icon"></span></button><!----><!--[--><a class="route-link vp-brand" href="/"><img class="vp-nav-logo" src="/logo.png" alt><!----><span class="vp-site-name hide-in-pad">docmoa</span></a><!--]--><!----></div><div class="vp-navbar-center"><!----><!--[--><nav class="vp-nav-links"><div class="vp-nav-item hide-in-mobile"><a class="route-link auto-link" href="/" aria-label="docmoa"><!--[--><span class="font-icon icon fa-fw fa-sm fas fa-home" style=""></span><!--]-->docmoa<!----></a></div><div class="vp-nav-item hide-in-mobile"><a class="route-link auto-link" href="/00-Howto/" aria-label="How To"><!--[--><span class="font-icon icon fa-fw fa-sm fas fa-rocket" style=""></span><!--]-->How To<!----></a></div><div class="vp-nav-item hide-in-mobile"><div class="vp-dropdown-wrapper"><button type="button" class="vp-dropdown-title" aria-label="Infra"><!--[--><span class="font-icon icon fa-fw fa-sm fas fa-server" style=""></span>Infra<!--]--><span class="arrow"></span><ul class="vp-dropdown"><li class="vp-dropdown-item"><a class="route-link auto-link" href="/01-Infrastructure/" aria-label="Infrastructure"><!---->Infrastructure<!----></a></li><li class="vp-dropdown-item"><a class="route-link auto-link" href="/02-PrivatePlatform/" aria-label="Private-Platform"><!---->Private-Platform<!----></a></li><li class="vp-dropdown-item"><a class="route-link auto-link" href="/03-PublicCloud/" aria-label="Public-Cloud"><!---->Public-Cloud<!----></a></li></ul></button></div></div><div class="vp-nav-item hide-in-mobile"><a class="route-link auto-link" href="/05-Software/" aria-label="Software"><!--[--><span class="font-icon icon fa-fw fa-sm fas fa-code" style=""></span><!--]-->Software<!----></a></div><div class="vp-nav-item hide-in-mobile"><a class="route-link route-link-active auto-link" href="/04-HashiCorp/" aria-label="HashiCorp"><!--[--><span class="font-icon icon fa-fw fa-sm fas fa-layer-group" style=""></span><!--]-->HashiCorp<!----></a></div><div class="vp-nav-item hide-in-mobile"><a class="route-link auto-link" href="/07-Kubernetes/" aria-label="Kubernetes"><!--[--><span class="font-icon icon fa-fw fa-sm fas fa-dharmachakra" style=""></span><!--]-->Kubernetes<!----></a></div><div class="vp-nav-item hide-in-mobile"><a class="route-link auto-link" href="/06-etc/" aria-label="Etc."><!--[--><span class="font-icon icon fa-fw fa-sm fas fa-mug-hot" style=""></span><!--]-->Etc.<!----></a></div><div class="vp-nav-item hide-in-mobile"><div class="vp-dropdown-wrapper"><button type="button" class="vp-dropdown-title" aria-label="MORE"><!--[--><span class="font-icon icon fa-fw fa-sm fas fa-circle-info" style=""></span>MORE<!--]--><span class="arrow"></span><ul class="vp-dropdown"><li class="vp-dropdown-item"><a class="route-link auto-link" href="/99-about/01-About.html" aria-label="About"><!--[--><span class="font-icon icon fa-fw fa-sm fas fa-house-circle-exclamation" style=""></span><!--]-->About<!----></a></li><li class="vp-dropdown-item"><a class="route-link auto-link" href="/99-about/02-Thanks.html" aria-label="Thank you"><!--[--><span class="font-icon icon fa-fw fa-sm fas fa-heart" style=""></span><!--]-->Thank you<!----></a></li></ul></button></div></div><div class="vp-nav-item hide-in-mobile"><a class="route-link auto-link" href="/timeline/" aria-label="Recently"><!--[--><span class="font-icon icon fa-fw fa-sm fas fa-clock-rotate-left" style=""></span><!--]-->Recently<!----></a></div></nav><!--]--><!----></div><div class="vp-navbar-end"><!----><!--[--><!----><div class="vp-nav-item vp-action"><a class="vp-action-link" href="https://github.com/docmoa/docs" target="_blank" rel="noopener noreferrer" aria-label="GitHub"><svg xmlns="http://www.w3.org/2000/svg" class="icon github-icon" viewBox="0 0 1024 1024" fill="currentColor" aria-label="github icon" name="github" style="width:1.25rem;height:1.25rem;vertical-align:middle;"><path d="M511.957 21.333C241.024 21.333 21.333 240.981 21.333 512c0 216.832 140.544 400.725 335.574 465.664 24.49 4.395 32.256-10.07 32.256-23.083 0-11.69.256-44.245 0-85.205-136.448 29.61-164.736-64.64-164.736-64.64-22.315-56.704-54.4-71.765-54.4-71.765-44.587-30.464 3.285-29.824 3.285-29.824 49.195 3.413 75.179 50.517 75.179 50.517 43.776 75.008 114.816 53.333 142.762 40.79 4.523-31.66 17.152-53.377 31.19-65.537-108.971-12.458-223.488-54.485-223.488-242.602 0-53.547 19.114-97.323 50.517-131.67-5.035-12.33-21.93-62.293 4.779-129.834 0 0 41.258-13.184 134.912 50.346a469.803 469.803 0 0 1 122.88-16.554c41.642.213 83.626 5.632 122.88 16.554 93.653-63.488 134.784-50.346 134.784-50.346 26.752 67.541 9.898 117.504 4.864 129.834 31.402 34.347 50.474 78.123 50.474 131.67 0 188.586-114.73 230.016-224.042 242.09 17.578 15.232 33.578 44.672 33.578 90.454v135.85c0 13.142 7.936 27.606 32.854 22.87C862.25 912.597 1002.667 728.747 1002.667 512c0-271.019-219.648-490.667-490.71-490.667z"></path></svg></a></div><div class="vp-nav-item hide-in-mobile"><button type="button" class="vp-outlook-button" tabindex="-1" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" class="icon outlook-icon" viewBox="0 0 1024 1024" fill="currentColor" aria-label="outlook icon" name="outlook"><path d="M224 800c0 9.6 3.2 44.8 6.4 54.4 6.4 48-48 76.8-48 76.8s80 41.6 147.2 0 134.4-134.4 38.4-195.2c-22.4-12.8-41.6-19.2-57.6-19.2C259.2 716.8 227.2 761.6 224 800zM560 675.2l-32 51.2c-51.2 51.2-83.2 32-83.2 32 25.6 67.2 0 112-12.8 128 25.6 6.4 51.2 9.6 80 9.6 54.4 0 102.4-9.6 150.4-32l0 0c3.2 0 3.2-3.2 3.2-3.2 22.4-16 12.8-35.2 6.4-44.8-9.6-12.8-12.8-25.6-12.8-41.6 0-54.4 60.8-99.2 137.6-99.2 6.4 0 12.8 0 22.4 0 12.8 0 38.4 9.6 48-25.6 0-3.2 0-3.2 3.2-6.4 0-3.2 3.2-6.4 3.2-6.4 6.4-16 6.4-16 6.4-19.2 9.6-35.2 16-73.6 16-115.2 0-105.6-41.6-198.4-108.8-268.8C704 396.8 560 675.2 560 675.2zM224 419.2c0-28.8 22.4-51.2 51.2-51.2 28.8 0 51.2 22.4 51.2 51.2 0 28.8-22.4 51.2-51.2 51.2C246.4 470.4 224 448 224 419.2zM320 284.8c0-22.4 19.2-41.6 41.6-41.6 22.4 0 41.6 19.2 41.6 41.6 0 22.4-19.2 41.6-41.6 41.6C339.2 326.4 320 307.2 320 284.8zM457.6 208c0-12.8 12.8-25.6 25.6-25.6 12.8 0 25.6 12.8 25.6 25.6 0 12.8-12.8 25.6-25.6 25.6C470.4 233.6 457.6 220.8 457.6 208zM128 505.6C128 592 153.6 672 201.6 736c28.8-60.8 112-60.8 124.8-60.8-16-51.2 16-99.2 16-99.2l316.8-422.4c-48-19.2-99.2-32-150.4-32C297.6 118.4 128 291.2 128 505.6zM764.8 86.4c-22.4 19.2-390.4 518.4-390.4 518.4-22.4 28.8-12.8 76.8 22.4 99.2l9.6 6.4c35.2 22.4 80 12.8 99.2-25.6 0 0 6.4-12.8 9.6-19.2 54.4-105.6 275.2-524.8 288-553.6 6.4-19.2-3.2-32-19.2-32C777.6 76.8 771.2 80 764.8 86.4z"></path></svg><div class="vp-outlook-dropdown"><!----></div></button></div><!--[--><button type="button" class="search-pro-button" aria-label="검색"><svg xmlns="http://www.w3.org/2000/svg" class="icon search-icon" viewBox="0 0 1024 1024" fill="currentColor" aria-label="search icon" name="search"><path d="M192 480a256 256 0 1 1 512 0 256 256 0 0 1-512 0m631.776 362.496-143.2-143.168A318.464 318.464 0 0 0 768 480c0-176.736-143.264-320-320-320S128 303.264 128 480s143.264 320 320 320a318.016 318.016 0 0 0 184.16-58.592l146.336 146.368c12.512 12.48 32.768 12.48 45.28 0 12.48-12.512 12.48-32.768 0-45.28"></path></svg><div class="search-pro-placeholder">검색</div><div class="search-pro-key-hints"><kbd class="search-pro-key">Ctrl</kbd><kbd class="search-pro-key">K</kbd></div></button><!--]--><!--]--><!----><button type="button" class="vp-toggle-navbar-button" aria-label="Toggle Navbar" aria-expanded="false" aria-controls="nav-screen"><span><span class="vp-top"></span><span class="vp-middle"></span><span class="vp-bottom"></span></span></button></div></header><!----><!--]--><!----><div class="toggle-sidebar-wrapper"><span class="arrow start"></span></div><aside id="sidebar" class="vp-sidebar"><!----><ul class="vp-sidebar-links"><li><a class="route-link auto-link vp-sidebar-link" href="/04-HashiCorp/" aria-label="HashiCorp"><!---->HashiCorp<!----></a></li><li><section class="vp-sidebar-group"><button class="vp-sidebar-header clickable" type="button"><!----><span class="vp-sidebar-title">01 Packer</span><span class="vp-arrow end"></span></button><!----></section></li><li><section class="vp-sidebar-group"><button class="vp-sidebar-header clickable" type="button"><!----><span class="vp-sidebar-title">02 Vagrant</span><span class="vp-arrow end"></span></button><!----></section></li><li><section class="vp-sidebar-group"><button class="vp-sidebar-header clickable" type="button"><!----><span class="vp-sidebar-title">03 Terraform</span><span class="vp-arrow end"></span></button><!----></section></li><li><section class="vp-sidebar-group"><button class="vp-sidebar-header clickable" type="button"><!----><span class="vp-sidebar-title">04 Consul</span><span class="vp-arrow end"></span></button><!----></section></li><li><section class="vp-sidebar-group"><button class="vp-sidebar-header clickable" type="button"><!----><span class="vp-sidebar-title">05 Boundary</span><span class="vp-arrow end"></span></button><!----></section></li><li><section class="vp-sidebar-group"><button class="vp-sidebar-header clickable" type="button"><!----><span class="vp-sidebar-title">06 Vault</span><span class="vp-arrow end"></span></button><!----></section></li><li><section class="vp-sidebar-group"><button class="vp-sidebar-header clickable active" type="button"><!----><span class="vp-sidebar-title">07 Nomad</span><span class="vp-arrow down"></span></button><ul class="vp-sidebar-links"><li><section class="vp-sidebar-group"><button class="vp-sidebar-header clickable" type="button"><!----><span class="vp-sidebar-title">01 Information</span><span class="vp-arrow end"></span></button><!----></section></li><li><section class="vp-sidebar-group"><button class="vp-sidebar-header clickable" type="button"><!----><span class="vp-sidebar-title">02 Config</span><span class="vp-arrow end"></span></button><!----></section></li><li><section class="vp-sidebar-group"><button class="vp-sidebar-header clickable" type="button"><!----><span class="vp-sidebar-title">03 Trouble Shooting</span><span class="vp-arrow end"></span></button><!----></section></li><li><section class="vp-sidebar-group"><button class="vp-sidebar-header clickable active" type="button"><!----><span class="vp-sidebar-title">04 Use Case</span><span class="vp-arrow down"></span></button><ul class="vp-sidebar-links"><li><a class="route-link auto-link vp-sidebar-link" href="/04-HashiCorp/07-Nomad/04-UseCase/springboot-graceful-shutdown.html" aria-label="Graceful Shutdown 적용 (kill_signal)"><!---->Graceful Shutdown 적용 (kill_signal)<!----></a></li><li><a class="route-link auto-link vp-sidebar-link" href="/04-HashiCorp/07-Nomad/04-UseCase/jenkins-pipeline.html" aria-label="Jenkins Pipeline Nomad (Integrated Vault)"><!---->Jenkins Pipeline Nomad (Integrated Vault)<!----></a></li><li><a class="route-link auto-link vp-sidebar-link" href="/04-HashiCorp/07-Nomad/04-UseCase/job-start-from-hcl.html" aria-label="Pass HCL to API"><!---->Pass HCL to API<!----></a></li><li><a class="route-link route-link-active auto-link vp-sidebar-link active" href="/04-HashiCorp/07-Nomad/04-UseCase/spring-boot-with-vaultandNomad.html" aria-label="Vault로 Spring Boot 구성관리 Nomad Version"><!---->Vault로 Spring Boot 구성관리 Nomad Version<!----></a></li></ul></section></li><li><section class="vp-sidebar-group"><button class="vp-sidebar-header clickable" type="button"><!----><span class="vp-sidebar-title">05 Sample Job</span><span class="vp-arrow end"></span></button><!----></section></li></ul></section></li><li><section class="vp-sidebar-group"><button class="vp-sidebar-header clickable" type="button"><!----><span class="vp-sidebar-title">08 Updates</span><span class="vp-arrow end"></span></button><!----></section></li></ul><!----></aside><!--[--><main id="main-content" class="vp-page"><!--[--><!----><!----><nav class="vp-breadcrumb disable"></nav><div class="vp-page-title"><h1><!---->Vault로 Spring Boot 구성관리 Nomad Version</h1><div class="page-info"><span class="page-author-info" aria-label="작성자🖊" data-balloon-pos="up"><svg xmlns="http://www.w3.org/2000/svg" class="icon author-icon" viewBox="0 0 1024 1024" fill="currentColor" aria-label="author icon" name="author"><path d="M649.6 633.6c86.4-48 147.2-144 147.2-249.6 0-160-128-288-288-288s-288 128-288 288c0 108.8 57.6 201.6 147.2 249.6-121.6 48-214.4 153.6-240 288-3.2 9.6 0 19.2 6.4 25.6 3.2 9.6 12.8 12.8 22.4 12.8h704c9.6 0 19.2-3.2 25.6-12.8 6.4-6.4 9.6-16 6.4-25.6-25.6-134.4-121.6-240-243.2-288z"></path></svg><span><span class="page-author-item">unghee</span></span><span property="author" content="unghee"></span></span><!----><span class="page-date-info" aria-label="작성일📅" data-balloon-pos="up"><svg xmlns="http://www.w3.org/2000/svg" class="icon calendar-icon" viewBox="0 0 1024 1024" fill="currentColor" aria-label="calendar icon" name="calendar"><path d="M716.4 110.137c0-18.753-14.72-33.473-33.472-33.473-18.753 0-33.473 14.72-33.473 33.473v33.473h66.993v-33.473zm-334.87 0c0-18.753-14.72-33.473-33.473-33.473s-33.52 14.72-33.52 33.473v33.473h66.993v-33.473zm468.81 33.52H716.4v100.465c0 18.753-14.72 33.473-33.472 33.473a33.145 33.145 0 01-33.473-33.473V143.657H381.53v100.465c0 18.753-14.72 33.473-33.473 33.473a33.145 33.145 0 01-33.473-33.473V143.657H180.6A134.314 134.314 0 0046.66 277.595v535.756A134.314 134.314 0 00180.6 947.289h669.74a134.36 134.36 0 00133.94-133.938V277.595a134.314 134.314 0 00-133.94-133.938zm33.473 267.877H147.126a33.145 33.145 0 01-33.473-33.473c0-18.752 14.72-33.473 33.473-33.473h736.687c18.752 0 33.472 14.72 33.472 33.473a33.145 33.145 0 01-33.472 33.473z"></path></svg><span><!----></span><meta property="datePublished" content="2024-09-08T11:26:38.000Z"></span><!----><span class="page-reading-time-info" aria-label="읽는 시간⌛" data-balloon-pos="up"><svg xmlns="http://www.w3.org/2000/svg" class="icon timer-icon" viewBox="0 0 1024 1024" fill="currentColor" aria-label="timer icon" name="timer"><path d="M799.387 122.15c4.402-2.978 7.38-7.897 7.38-13.463v-1.165c0-8.933-7.38-16.312-16.312-16.312H256.33c-8.933 0-16.311 7.38-16.311 16.312v1.165c0 5.825 2.977 10.874 7.637 13.592 4.143 194.44 97.22 354.963 220.201 392.763-122.204 37.542-214.893 196.511-220.2 389.397-4.661 5.049-7.638 11.651-7.638 19.03v5.825h566.49v-5.825c0-7.379-2.849-13.981-7.509-18.9-5.049-193.016-97.867-351.985-220.2-389.527 123.24-37.67 216.446-198.453 220.588-392.892zM531.16 450.445v352.632c117.674 1.553 211.787 40.778 211.787 88.676H304.097c0-48.286 95.149-87.382 213.728-88.676V450.445c-93.077-3.107-167.901-81.297-167.901-177.093 0-8.803 6.99-15.793 15.793-15.793 8.803 0 15.794 6.99 15.794 15.793 0 80.261 63.69 145.635 142.01 145.635s142.011-65.374 142.011-145.635c0-8.803 6.99-15.793 15.794-15.793s15.793 6.99 15.793 15.793c0 95.019-73.789 172.82-165.96 177.093z"></path></svg><span>약 11 분</span><meta property="timeRequired" content="PT11M"></span><!----><span class="page-tag-info" aria-label="태그🏷" data-balloon-pos="up"><svg xmlns="http://www.w3.org/2000/svg" class="icon tag-icon" viewBox="0 0 1024 1024" fill="currentColor" aria-label="tag icon" name="tag"><path d="M939.902 458.563L910.17 144.567c-1.507-16.272-14.465-29.13-30.737-30.737L565.438 84.098h-.402c-3.215 0-5.726 1.005-7.634 2.913l-470.39 470.39a10.004 10.004 0 000 14.164l365.423 365.424c1.909 1.908 4.42 2.913 7.132 2.913s5.223-1.005 7.132-2.913l470.39-470.39c2.01-2.11 3.014-5.023 2.813-8.036zm-240.067-72.121c-35.458 0-64.286-28.828-64.286-64.286s28.828-64.285 64.286-64.285 64.286 28.828 64.286 64.285-28.829 64.286-64.286 64.286z"></path></svg><!--[--><span class="page-tag-item color2 clickable" role="navigation">vault</span><span class="page-tag-item color8 clickable" role="navigation">java</span><span class="page-tag-item color8 clickable" role="navigation">spring</span><span class="page-tag-item color6 clickable" role="navigation">nomad</span><!--]--><meta property="keywords" content="vault,java,spring,nomad"></span></div><hr></div><!----><!----><div class="theme-hope-content"><h1 id="vault로-spring-boot-구성관리-nomad-version" tabindex="-1"><a class="header-anchor" href="#vault로-spring-boot-구성관리-nomad-version"><span>Vault로 Spring Boot 구성관리 Nomad Version</span></a></h1><blockquote><p>token, app-role로 관리: <a href="https://docmoa.github.io/04-HashiCorp/06-Vault/04-UseCase/spring-boot.html" target="_blank" rel="noopener noreferrer">docmoa</a></p></blockquote><blockquote><p>aws-auth로 관리: <a href="https://docmoa.github.io/04-HashiCorp/06-Vault/04-UseCase/spring-boot-with-vault.html" target="_blank" rel="noopener noreferrer">docmoa</a></p></blockquote><p>Spring Boot에서는 <strong>Token, AppRole</strong> 외에도 <strong>AWS Auth</strong>를 통해 시크릿을 주입할 수 있습니다. AWS Auth 방식은 <strong>AWS IAM과 EC2 Tag</strong>를 기반으로 인증 및 권한 부여 과정을 간소화하는 장점이 있습니다.</p><p>하지만 AWS Auth의 단점은 <strong>AWS에 종속</strong>된다는 점과, <strong>IAM 권한 설정</strong> 과정이 복잡해져 관리가 어려워질 수 있다는 것입니다. IAM 정책 및 권한을 잘못 설정하면 보안 취약점이 발생하거나 접근이 제대로 이루어지지 않는 문제를 겪을 수 있습니다.</p><p>그래서 이에 대한 해결책으로 <strong>Nomad를 통해 Vault와 통합하여 애플리케이션을 관리</strong>하는 방식을 제안드립니다. Nomad를 사용하면 애플리케이션의 배포와 Vault 인증, 권한 부여 과정이 Nomad와 Vault 간에만 처리되며, 개발자는 이를 신경 쓰지 않고 배포를 관리할 수 있습니다.</p><p>Nomad와 Vault의 통합을 통해 인증과 인가를 자동화하고 관리 복잡성을 줄이는 방법을 아래 테스트에서 함께 살펴보시죠.</p><p>먼저 아래 두가지 방식이 있을 것 같습니다.</p><ul><li>token만 치환하면 되는 상황</li><li>secret을 받아오고 Nomad job에 주입하는 방식</li></ul><p>처음 거는 Spring boot app으로 진행 할 것이며, 두번째는 keycloak env를 관리하는 것으로 진행하도록 하겠습니다.</p><ol><li>Vault Secret 설정</li></ol><ul><li>Vault Secret은 아래와 같이 설정했습니다. <ul><li>vault_token_auth_backend_role.nomad_cluster에서는 Nomad Cluster의 적용 될 token의 role 설정입니다.</li><li>vault_policy.admin에서는 Nomad Cluster에서 token을 인증인가 받는 권한이 설정됩니다.</li><li>vault_policy.vault_and_spring에서는 Nomad job에서 사용 할 Secret의 Path의 권한을 설정합니다.</li><li>vault_kv_secret_v2.keycloak_env에서는 keycloak에서 사용되는 환경변수를 관리합니다.</li></ul></li></ul><div class="language-hcl" data-highlighter="prismjs" data-ext="hcl" data-title="hcl"><pre class="language-hcl"><code><span class="line"><span class="token comment">#Nomad Cluster의 적용 될 policy와 job에서 사용 될 policy를 role에 설정합니다.</span></span>
+<span class="line"><span class="token keyword">resource <span class="token type variable">&quot;vault_token_auth_backend_role&quot;</span></span> <span class="token string">&quot;nomad_cluster&quot;</span> <span class="token punctuation">{</span></span>
+<span class="line">  <span class="token property">allowed_policies</span>        <span class="token punctuation">=</span> <span class="token punctuation">[</span>vault_policy.admin.name,vault_policy.vault_and_spring.name<span class="token punctuation">]</span></span>
+<span class="line">  <span class="token property">orphan</span>                  <span class="token punctuation">=</span> <span class="token boolean">true</span></span>
+<span class="line">  <span class="token property">token_period</span>            <span class="token punctuation">=</span> <span class="token number">94608000</span></span>
+<span class="line">  <span class="token property">renewable</span>               <span class="token punctuation">=</span> <span class="token boolean">true</span></span>
+<span class="line">  <span class="token property">token_explicit_max_ttl</span>  <span class="token punctuation">=</span> <span class="token number">0</span>    </span>
+<span class="line">  <span class="token property">role_name</span>               <span class="token punctuation">=</span> <span class="token string">&quot;nomad-admin&quot;</span></span>
+<span class="line"><span class="token punctuation">}</span></span>
+<span class="line"></span>
+<span class="line"><span class="token comment"># Admin 정책 생성</span></span>
+<span class="line"><span class="token keyword">resource <span class="token type variable">&quot;vault_policy&quot;</span></span> <span class="token string">&quot;admin&quot;</span> <span class="token punctuation">{</span></span>
+<span class="line">  <span class="token property">name</span> <span class="token punctuation">=</span> <span class="token string">&quot;nomad-admin&quot;</span></span>
+<span class="line"></span>
+<span class="line">  <span class="token property">policy</span> <span class="token punctuation">=</span> <span class="token heredoc string">&lt;&lt;EOT</span>
+<span class="line"># Read system health check</span>
+<span class="line">path &quot;sys/health&quot; {</span>
+<span class="line">  capabilities = [&quot;read&quot;, &quot;sudo&quot;]</span>
+<span class="line">}</span>
+<span class="line"></span>
+<span class="line"># List existing policies</span>
+<span class="line">path &quot;sys/policies/acl&quot; {</span>
+<span class="line">  capabilities = [&quot;list&quot;]</span>
+<span class="line">}</span>
+<span class="line"></span>
+<span class="line"># Create and manage ACL policies</span>
+<span class="line">path &quot;sys/policies/acl/*&quot; {</span>
+<span class="line">  capabilities = [&quot;create&quot;, &quot;read&quot;, &quot;update&quot;, &quot;delete&quot;, &quot;list&quot;, &quot;sudo&quot;]</span>
+<span class="line">}</span>
+<span class="line"></span>
+<span class="line"># Manage auth methods broadly across Vault</span>
+<span class="line">path &quot;auth/*&quot; {</span>
+<span class="line">  capabilities = [&quot;create&quot;, &quot;read&quot;, &quot;update&quot;, &quot;delete&quot;, &quot;list&quot;, &quot;sudo&quot;]</span>
+<span class="line">}</span>
+<span class="line"></span>
+<span class="line"># Create, update, and delete auth methods</span>
+<span class="line">path &quot;sys/auth/*&quot; {</span>
+<span class="line">  capabilities = [&quot;create&quot;, &quot;update&quot;, &quot;delete&quot;, &quot;sudo&quot;]</span>
+<span class="line">}</span>
+<span class="line"></span>
+<span class="line"># List auth methods</span>
+<span class="line">path &quot;sys/auth&quot; {</span>
+<span class="line">  capabilities = [&quot;read&quot;]</span>
+<span class="line">}</span>
+<span class="line"></span>
+<span class="line"># List, create, update, and delete key/value secrets</span>
+<span class="line">path &quot;nomad-job/*&quot; {</span>
+<span class="line">  capabilities = [&quot;create&quot;, &quot;read&quot;, &quot;update&quot;, &quot;delete&quot;, &quot;list&quot;, &quot;sudo&quot;]</span>
+<span class="line">}</span>
+<span class="line"></span>
+<span class="line"># Manage secrets engines</span>
+<span class="line">path &quot;sys/mounts/*&quot; {</span>
+<span class="line">  capabilities = [&quot;create&quot;, &quot;read&quot;, &quot;update&quot;, &quot;delete&quot;, &quot;list&quot;, &quot;sudo&quot;]</span>
+<span class="line">}</span>
+<span class="line"></span>
+<span class="line"># List existing secrets engines.</span>
+<span class="line">path &quot;sys/mounts&quot; {</span>
+<span class="line">  capabilities = [&quot;read&quot;]</span>
+<span class="line">}</span>
+<span class="line">EOT</span></span>
+<span class="line"><span class="token punctuation">}</span></span>
+<span class="line"></span>
+<span class="line"><span class="token comment">#application에서 접근 시 사용 되는 policy입니다.</span></span>
+<span class="line"><span class="token keyword">resource <span class="token type variable">&quot;vault_policy&quot;</span></span> <span class="token string">&quot;vault_and_spring&quot;</span> <span class="token punctuation">{</span></span>
+<span class="line">  <span class="token property">name</span> <span class="token punctuation">=</span> <span class="token string">&quot;vault_and_spring&quot;</span></span>
+<span class="line"></span>
+<span class="line">  <span class="token property">policy</span> <span class="token punctuation">=</span> <span class="token heredoc string">&lt;&lt;EOT</span>
+<span class="line">path &quot;mzc-spring/data/java_and_vault&quot; {</span>
+<span class="line">  capabilities = [&quot;read&quot;,&quot;update&quot;,&quot;create&quot;]</span>
+<span class="line">}</span>
+<span class="line"></span>
+<span class="line">path &quot;mzc-spring/data/java_and_vault/dev&quot; {</span>
+<span class="line">  capabilities = [&quot;read&quot;,&quot;update&quot;,&quot;create&quot;]</span>
+<span class="line">}</span>
+<span class="line"></span>
+<span class="line">EOT</span></span>
+<span class="line"><span class="token punctuation">}</span></span>
+<span class="line"></span>
+<span class="line"><span class="token comment"># Token 생성</span></span>
+<span class="line"><span class="token keyword">resource <span class="token type variable">&quot;vault_token&quot;</span></span> <span class="token string">&quot;admin_token&quot;</span> <span class="token punctuation">{</span></span>
+<span class="line">  <span class="token property">policies</span>  <span class="token punctuation">=</span> <span class="token punctuation">[</span>vault_policy.admin.name<span class="token punctuation">]</span></span>
+<span class="line">  <span class="token property">period</span>    <span class="token punctuation">=</span> <span class="token string">&quot;36500h&quot;</span> <span class="token comment"># 36500시간 (약 4년)</span></span>
+<span class="line"><span class="token punctuation">}</span></span>
+<span class="line"></span>
+<span class="line"></span>
+<span class="line"></span>
+<span class="line"><span class="token comment"># Vault에 KV secret engine 마운트</span></span>
+<span class="line"><span class="token keyword">resource <span class="token type variable">&quot;vault_mount&quot;</span></span> <span class="token string">&quot;nomad-job&quot;</span> <span class="token punctuation">{</span></span>
+<span class="line">  <span class="token property">path</span>    <span class="token punctuation">=</span> <span class="token string">&quot;nomad-job&quot;</span></span>
+<span class="line">  <span class="token property">type</span>    <span class="token punctuation">=</span> <span class="token string">&quot;kv&quot;</span></span>
+<span class="line">  <span class="token property">options</span> <span class="token punctuation">=</span> <span class="token punctuation">{</span> <span class="token property">version</span> <span class="token punctuation">=</span> <span class="token string">&quot;2&quot;</span> <span class="token punctuation">}</span></span>
+<span class="line"><span class="token punctuation">}</span></span>
+<span class="line"></span>
+<span class="line"><span class="token comment"># sample로 보게 될 keycloak secret 입니다.</span></span>
+<span class="line"><span class="token keyword">resource <span class="token type variable">&quot;vault_kv_secret_v2&quot;</span></span> <span class="token string">&quot;keycloak_env&quot;</span> <span class="token punctuation">{</span></span>
+<span class="line">  <span class="token property">mount</span>               <span class="token punctuation">=</span> vault_mount.nomad-job.path</span>
+<span class="line">  <span class="token property">name</span>                <span class="token punctuation">=</span> <span class="token string">&quot;keycloak/config&quot;</span></span>
+<span class="line">  <span class="token property">cas</span>                 <span class="token punctuation">=</span> <span class="token number">1</span></span>
+<span class="line">  <span class="token property">delete_all_versions</span> <span class="token punctuation">=</span> <span class="token boolean">false</span></span>
+<span class="line">  <span class="token property">data_json</span> <span class="token punctuation">=</span> jsonencode(<span class="token punctuation">{</span></span>
+<span class="line">    <span class="token property">KEYCLOAK_ADMIN</span>                   <span class="token punctuation">=</span> <span class="token string">&quot;id&quot;</span>,</span>
+<span class="line">    <span class="token property">KEYCLOAK_ADMIN_PASSWORD</span>          <span class="token punctuation">=</span> <span class="token string">&quot;passowrd&quot;</span>,</span>
+<span class="line">    <span class="token property">KEYCLOAK_BASE_URL</span>                <span class="token punctuation">=</span> <span class="token string">&quot;/realms/master/hostname-debug&quot;</span>,</span>
+<span class="line">    <span class="token property">KC_HOSTNAME_DEBUG</span>                <span class="token punctuation">=</span> <span class="token boolean">true</span>,</span>
+<span class="line">    <span class="token property">KC_HOSTNAME_STRICT</span>               <span class="token punctuation">=</span> <span class="token boolean">true</span>,</span>
+<span class="line">    <span class="token property">KC_HOSTNAME</span>                      <span class="token punctuation">=</span> <span class="token string">&quot;keycloak.domain&quot;</span>,</span>
+<span class="line">    <span class="token property">KC_HOSTNAME_STRICT_HTTPS</span>         <span class="token punctuation">=</span> <span class="token boolean">true</span>,</span>
+<span class="line">    <span class="token property">KC_HTTP_ENABLED</span>                  <span class="token punctuation">=</span> <span class="token boolean">false</span>,</span>
+<span class="line">    <span class="token property">KC_HTTPS_CERTIFICATE_FILE</span>        <span class="token punctuation">=</span> <span class="token string">&quot;/etc/x509/https/keycloak.crt&quot;</span>,</span>
+<span class="line">    <span class="token property">KC_HTTPS_CERTIFICATE_KEY_FILE</span>    <span class="token punctuation">=</span> <span class="token string">&quot;/etc/x509/https/keycloak.key&quot;</span>,</span>
+<span class="line">    <span class="token property">QUARKUS_HTTP_HOST</span>                <span class="token punctuation">=</span> <span class="token string">&quot;0.0.0.0&quot;</span></span>
+<span class="line">  <span class="token punctuation">}</span>)</span>
+<span class="line"><span class="token punctuation">}</span></span>
+<span class="line"></span></code></pre></div><ol start="2"><li>Nomad 설정</li></ol><ul><li>Nomad Server와 Client에 다음과 같은 설정이 추가됩니다.</li></ul><div class="language-hcl" data-highlighter="prismjs" data-ext="hcl" data-title="hcl"><pre class="language-hcl"><code><span class="line"><span class="token comment"># Nomad Server /etc/nomad.d/nomad.hcl</span></span>
+<span class="line">...</span>
+<span class="line"><span class="token keyword">vault</span> <span class="token punctuation">{</span></span>
+<span class="line">    <span class="token property">enabled</span> <span class="token punctuation">=</span> <span class="token boolean">true</span></span>
+<span class="line">    <span class="token property">address</span> <span class="token punctuation">=</span> <span class="token string">&quot;vault Server url:port&quot;</span></span>
+<span class="line">    <span class="token property">namespace</span> <span class="token punctuation">=</span> <span class="token string">&quot;admin&quot;</span></span>
+<span class="line">    <span class="token property">create_from_role</span> <span class="token punctuation">=</span> <span class="token string">&quot;nomad-admin&quot;</span></span>
+<span class="line">    <span class="token property">token</span> <span class="token punctuation">=</span> <span class="token string">&quot;1번에서 생성한 token&quot;</span></span>
+<span class="line"><span class="token punctuation">}</span></span>
+<span class="line">...</span>
+<span class="line"><span class="token comment"># Nomad Client /etc/nomad.d/nomad.hcl</span></span>
+<span class="line"><span class="token keyword">vault</span> <span class="token punctuation">{</span></span>
+<span class="line">  <span class="token property">enabled</span>   <span class="token punctuation">=</span> <span class="token boolean">true</span></span>
+<span class="line">  <span class="token property">address</span>   <span class="token punctuation">=</span> <span class="token string">&quot;vault Server url:port&quot;</span></span>
+<span class="line"><span class="token punctuation">}</span></span>
+<span class="line">...</span>
+<span class="line"></span></code></pre></div><ol start="3"><li>Nomad job에서 Secret 설정</li></ol><ul><li>Nomad는 배포를 job이라는 형식을 통해서 배포합니다.</li><li>배포를 진행할때 Vault에 있는 Secret을 file화 하거나 환경변수에 넣을 수 있습니다.</li><li>keycloak app에서 어떤식으로 적용되는 지 같이 살펴보시죠.</li></ul><div class="language-text line-numbers-mode" data-highlighter="prismjs" data-ext="text" data-title="text"><pre class="language-text"><code><span class="line">job &quot;keycloak&quot; {</span>
+<span class="line">  type = &quot;service&quot;</span>
+<span class="line">  datacenters = [&quot;dc1&quot;]</span>
+<span class="line"></span>
+<span class="line">  group &quot;keycloak&quot; {</span>
+<span class="line">    count = 1</span>
+<span class="line">....................       </span>
+<span class="line">    </span>
+<span class="line">    task &quot;keycloak&quot; {</span>
+<span class="line">      driver = &quot;docker&quot;</span>
+<span class="line">  </span>
+<span class="line">      config {</span>
+<span class="line">        image = &quot;quay.io/keycloak/keycloak:24.0.0&quot;</span>
+<span class="line">        args = [&quot;start&quot;,</span>
+<span class="line">        &quot;--optimized&quot;,</span>
+<span class="line">        &quot;--https-port=9443&quot;]</span>
+<span class="line">        volumes = [</span>
+<span class="line">          &quot;local/keycloak.conf:/etc/keycloak.conf&quot;,</span>
+<span class="line">        ] </span>
+<span class="line">        ports = [&quot;http&quot;]</span>
+<span class="line"></span>
+<span class="line">      }</span>
+<span class="line">      #Vault의 policy를 지정합니다.</span>
+<span class="line">      vault {</span>
+<span class="line">        policies  = [&quot;nomad-admin&quot;]</span>
+<span class="line">        change_mode   = &quot;signal&quot;</span>
+<span class="line">        change_signal = &quot;SIGINT&quot;</span>
+<span class="line">      }</span>
+<span class="line">      #데이터를 받아 올 secret의 path를 지정하고 모든 key, value를 key=value로 치환합니다.</span>
+<span class="line">      template {</span>
+<span class="line">        data = &lt;&lt;EOH</span>
+<span class="line">    {{- with secret &quot;nomad-job/data/keycloak/config&quot; }}</span>
+<span class="line">    {{- range $key, $value := .Data.data }}</span>
+<span class="line">    {{ $key }}=&quot;{{ $value }}&quot;</span>
+<span class="line">    {{- end }}</span>
+<span class="line">    {{- end }}</span>
+<span class="line">    EOH</span>
+<span class="line"></span>
+<span class="line">        destination = &quot;secrets/file.env&quot;</span>
+<span class="line">        env         = true</span>
+<span class="line">     }      </span>
+<span class="line">....................      </span>
+<span class="line">  }</span>
+<span class="line">}</span>
+<span class="line"></span></code></pre><div class="line-numbers" aria-hidden="true" style="counter-reset:line-number 0;"><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div></div></div><ol start="4"><li>배포 확인</li></ol><ul><li><p>먼저 secret한 값들은 유저가 알지 못해야 하며, 확인도 할 수 없어야 합니다.</p></li><li><p>배포대상(container 또는 서버)에 접근한다면 확인이 가능합니다. 이 행위 자체는 이미 보안적인 이슈가 생긴 상황이나 긴급한 상황일 경우일 것입니다.</p></li><li><p>nomad ui에서는 env 파일을 읽을 수 없습니다.<br><img src="/assets/vaultandnomad2-B4M_UDMH.png" alt="" loading="lazy"></p></li><li><p>nomad ui에서는 token 또한 읽을 수 없습니다.<br><img src="/assets/vaultandnomad3-CMOR_Svb.png" alt="" loading="lazy"></p></li><li><p>Container에 다이렉트로 접근해야 만 env를 확인 할 수 있습니다.<br><img src="/assets/vaultandnomad1-C0McbJTP.png" alt="" loading="lazy"></p></li></ul><ol start="5"><li>미리 Application에 Token만 주입하면 되는 상황</li></ol><ul><li>이미 <a href="https://docmoa.github.io/04-HashiCorp/06-Vault/04-UseCase/spring-boot.html" target="_blank" rel="noopener noreferrer">docmoa</a>에서 알아 본 Token방식의 인증 일 경우는 CI/CD에서 Token을 주입해야합니다.</li><li>만약 Nomad로 배포하면 이러한 Token 또한 Nomad가 주입, 로테이트까지 진행해줍니다.</li><li>keycloak sample과 다르게 매우 단순합니다. token만 주입하면 되기 때문입니다.</li><li>먼저 지난 yaml을 한번 더 확인해보겠습니다.</li></ul><div class="language-text line-numbers-mode" data-highlighter="prismjs" data-ext="text" data-title="text"><pre class="language-text"><code><span class="line">spring:</span>
+<span class="line">  cloud:</span>
+<span class="line">    vault:</span>
+<span class="line">      host: vault_url</span>
+<span class="line">      port: 8200</span>
+<span class="line">      scheme: https</span>
+<span class="line">      namespace: admin</span>
+<span class="line">      authentication: TOKEN</span>
+<span class="line">      application-name: java_and_vault</span>
+<span class="line">      # VAULT_TOKEN이라는 환경변수의 Vault token만 있으면 됩니다.</span>
+<span class="line">      token: ${VAULT_TOKEN:root}</span>
+<span class="line">      # profiles: dev</span>
+<span class="line">      generic:</span>
+<span class="line">        enabled: false</span>
+<span class="line">      kv:</span>
+<span class="line">        enabled: true</span>
+<span class="line">        backend: mzc-spring</span>
+<span class="line">        profile-separator: /</span>
+<span class="line"></span></code></pre><div class="line-numbers" aria-hidden="true" style="counter-reset:line-number 0;"><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div></div></div><ul><li><p>spring.cloud.vault.token에 환경변수로 VAULT_TOKEN만 있으면 되는 상황입니다.</p></li><li><p>해당 토큰만 있다면 나머지 Secret은 spring.cloud.vault.kv.backend 설정에 따라 불러 올 수 있는 상황입니다.</p></li><li><p>다음은 Nomad job입니다.</p></li></ul><div class="language-text line-numbers-mode" data-highlighter="prismjs" data-ext="text" data-title="text"><pre class="language-text"><code><span class="line">job &quot;vault_and_spring&quot; {</span>
+<span class="line">  type = &quot;service&quot;</span>
+<span class="line">  datacenters = [&quot;dc1&quot;]</span>
+<span class="line"></span>
+<span class="line">  group &quot;vault_and_spring&quot; {</span>
+<span class="line">    count = 1</span>
+<span class="line">    </span>
+<span class="line">    service {</span>
+<span class="line">      name = &quot;spring&quot;</span>
+<span class="line">      tags = [&quot;vault&quot;,&quot;spring&quot;]</span>
+<span class="line">      provider = &quot;nomad&quot;</span>
+<span class="line">      check {</span>
+<span class="line">        type  = &quot;tcp&quot;</span>
+<span class="line">        interval = &quot;20s&quot;</span>
+<span class="line">        timeout  = &quot;2s&quot;</span>
+<span class="line">        port  = &quot;vault_and_spring&quot;</span>
+<span class="line">      }      </span>
+<span class="line">    }</span>
+<span class="line">    </span>
+<span class="line">    network {</span>
+<span class="line">      port &quot;vault_and_spring&quot; {</span>
+<span class="line">        static  = 8081</span>
+<span class="line">        to      = 8081</span>
+<span class="line">      }</span>
+<span class="line">    }</span>
+<span class="line">    task &quot;ecr-login&quot; {</span>
+<span class="line">      driver = &quot;raw_exec&quot;</span>
+<span class="line"></span>
+<span class="line">      config {</span>
+<span class="line">        command = &quot;/bin/bash&quot;</span>
+<span class="line">        args    = [&quot;local/ecr-login.sh&quot;]</span>
+<span class="line">      }</span>
+<span class="line">      template {</span>
+<span class="line">        data = &lt;&lt;EOH</span>
+<span class="line">aws ecr get-login-password --region ap-northeast-2 | docker login --username AWS --password-stdin account.dkr.ecr.ap-northeast-2.amazonaws.com</span>
+<span class="line">cat /root/.docker/config.json</span>
+<span class="line">EOH</span>
+<span class="line">    destination = &quot;local/ecr-login.sh&quot;</span>
+<span class="line">      }</span>
+<span class="line"></span>
+<span class="line">      resources {</span>
+<span class="line">        cpu    = 100</span>
+<span class="line">        memory = 256</span>
+<span class="line">      }</span>
+<span class="line"></span>
+<span class="line">      lifecycle {</span>
+<span class="line">        hook   = &quot;prestart&quot;</span>
+<span class="line">        sidecar = false</span>
+<span class="line">      }</span>
+<span class="line">    }    </span>
+<span class="line">      </span>
+<span class="line">    task &quot;vault_and_spring&quot; {</span>
+<span class="line">      driver = &quot;docker&quot;</span>
+<span class="line">  </span>
+<span class="line">      config {</span>
+<span class="line">        image = &quot;account.dkr.ecr.ap-northeast-2.amazonaws.com/vault_and_spring:latest&quot;</span>
+<span class="line">        args = [&quot;--spring.profiles.active=dev&quot;] </span>
+<span class="line">        ports = [&quot;vault_and_spring&quot;]</span>
+<span class="line">      }</span>
+<span class="line">      #미리 생성한 Vault token을 기입해줍니다.</span>
+<span class="line">      vault {</span>
+<span class="line">        policies  = [&quot;vault_and_spring&quot;]</span>
+<span class="line">        change_mode   = &quot;signal&quot;</span>
+<span class="line">        change_signal = &quot;SIGINT&quot;</span>
+<span class="line">      }      </span>
+<span class="line">...................</span>
+<span class="line">}</span>
+<span class="line"></span></code></pre><div class="line-numbers" aria-hidden="true" style="counter-reset:line-number 0;"><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div></div></div><ul><li>keycloak과는 다르게 secret을 env에 넣는 구문이 없습니다.</li></ul><ol start="6"><li>적용 확인</li></ol><ul><li>배포 결과를 확인해봅시다.<br><img src="/assets/vaultandnomad4-BLW_l25l.png" alt="" loading="lazy"></li><li>이제는 익숙한 url과 db id, password가 잘 찍히고 있습니다.</li></ul></div><!----><footer class="vp-page-meta"><div class="vp-meta-item edit-link"><a class="auto-link external-link vp-meta-label" href="https://github.com/docmoa/docs/edit/main/docs/04-HashiCorp/07-Nomad/04-UseCase/spring-boot-with-vaultandNomad.md" aria-label="Edit this page on GitHub" rel="noopener noreferrer" target="_blank"><!--[--><svg xmlns="http://www.w3.org/2000/svg" class="icon edit-icon" viewBox="0 0 1024 1024" fill="currentColor" aria-label="edit icon" name="edit"><path d="M430.818 653.65a60.46 60.46 0 0 1-50.96-93.281l71.69-114.012 7.773-10.365L816.038 80.138A60.46 60.46 0 0 1 859.225 62a60.46 60.46 0 0 1 43.186 18.138l43.186 43.186a60.46 60.46 0 0 1 0 86.373L588.879 565.55l-8.637 8.637-117.466 68.234a60.46 60.46 0 0 1-31.958 11.229z"></path><path d="M728.802 962H252.891A190.883 190.883 0 0 1 62.008 771.98V296.934a190.883 190.883 0 0 1 190.883-192.61h267.754a60.46 60.46 0 0 1 0 120.92H252.891a69.962 69.962 0 0 0-69.098 69.099V771.98a69.962 69.962 0 0 0 69.098 69.098h475.911A69.962 69.962 0 0 0 797.9 771.98V503.363a60.46 60.46 0 1 1 120.922 0V771.98A190.883 190.883 0 0 1 728.802 962z"></path></svg><!--]-->Edit this page on GitHub<!----></a></div><div class="vp-meta-item git-info"><div class="update-time"><span class="vp-meta-label">마지막 수정: </span><!----></div><div class="contributors"><span class="vp-meta-label">기여자: </span><!--[--><!--[--><span class="vp-meta-info" title="email: ung@mz.co.kr">ung</span><!--]--><!--]--></div></div></footer><nav class="vp-page-nav"><a class="route-link auto-link prev" href="/04-HashiCorp/07-Nomad/04-UseCase/job-start-from-hcl.html" aria-label="Pass HCL to API"><div class="hint"><span class="arrow start"></span>이전</div><div class="link"><!---->Pass HCL to API</div></a><!----></nav><!----><!----><!--]--></main><!--]--><footer class="vp-footer-wrapper"><div class="vp-footer">CC BY-NC-ND 4.0 Licensed | ⓒ 2021-present docmoa™ contributers all rights reserved.</div><div class="vp-copyright">Copyright © 2024 unghee </div></footer></div><!--]--><!--]--><!--[--><!----><!----><!----><!--]--><!--]--></div>
+    <script type="module" src="/assets/app-BWMI_1Y2.js" defer></script>
+  </body>
+</html>
