@@ -1,0 +1,1 @@
+var e=`/assets/lab1-02-B2Bdukr2.png`;export{e as t};
